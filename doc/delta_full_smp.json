@@ -1,0 +1,140 @@
+{
+  "revision": 9,
+  "deltaList": [
+    {
+      "objectType": "VISITOR",
+      "event": "upd",
+      "id": "6bc79dd4ce354be19a1aff40986a2373",
+      "data": {
+        "id": "1ec0c3e3db4c4844a8594f15d27f4771",
+        "icon": { "color": "#5fa0ea", "shape": "check" },
+        "stored": true,
+        "hasProvidedFields": false,
+        "creationTs": 1627410560.6509798,
+        "modificationTs": 1627410560.65105
+      }
+    },
+    {
+      "objectType": "CHAT",
+      "event": "upd",
+      "id": "6bc79dd4ce354be19a1aff40986a2373",
+      "data": {
+        "id": null,
+        "clientSideId": "1db4d87e6bc44eefa02d03e403dfac31",
+        "state": "invitation",
+        "offline": false,
+        "creationTs": 1627410568.426417,
+        "visitorTyping": false,
+        "visitorMessageDraft": null,
+        "readByVisitor": false,
+        "unreadByVisitorSinceTs": 1627410568.4284513,
+        "unreadByVisitorMsgCnt": 1,
+        "operatorTyping": false,
+        "unreadByOperatorSinceTs": null,
+        "subject": "",
+        "category": null,
+        "subcategory": null,
+        "messages": [
+          {
+            "id": "bc24f043a52044e8ba4a4115204adb2f",
+            "clientSideId": "d402d355c251317f14bd9c05d6ab8600",
+            "channelSideId": null,
+            "kind": "operator",
+            "name": "Николай",
+            "avatar": "/webim/images/avatar/demo_33202.png",
+            "authorId": 33202,
+            "text": "Бонус 1",
+            "sessionId": "6bc79dd4ce354be19a1aff40986a2373",
+            "ts": 1627410568.4284513,
+            "modifiedTs": 1627410568.4284513,
+            "canBeReplied": true,
+            "canBeEdited": false,
+            "edited": false
+          }
+        ],
+        "operatorIdToRate": {},
+        "needToBeClosed": false,
+        "operator": {
+          "id": 33202,
+          "fullname": "Николай",
+          "langToFullname": {},
+          "avatar": "/webim/images/avatar/demo_33202.png",
+          "departmentKeys": [
+            "telegram",
+            "test3",
+            "test2",
+            "mobile_department",
+            "rxd",
+            "tt"
+          ],
+          "sip": "10002715000033202",
+          "robotType": null
+        }
+      }
+    },
+    {
+      "objectType": "POLLING_PERIOD",
+      "event": "upd",
+      "id": "6bc79dd4ce354be19a1aff40986a2373",
+      "data": 2
+    },
+    {
+      "objectType": "VISIT_SESSION_STATE",
+      "event": "upd",
+      "id": "6bc79dd4ce354be19a1aff40986a2373",
+      "data": "chat"
+    },
+    {
+      "objectType": "CHAT_MESSAGE",
+      "event": "add",
+      "id": "bc24f043a52044e8ba4a4115204adb2f",
+      "data": {
+        "id": "bc24f043a52044e8ba4a4115204adb2f",
+        "clientSideId": "d402d355c251317f14bd9c05d6ab8600",
+        "channelSideId": null,
+        "kind": "operator",
+        "name": "Николай",
+        "avatar": "/webim/images/avatar/demo_33202.png",
+        "authorId": 33202,
+        "text": "Бонус 1",
+        "sessionId": "6bc79dd4ce354be19a1aff40986a2373",
+        "ts": 1627410568.4284513,
+        "modifiedTs": 1627410568.4284513,
+        "canBeReplied": true,
+        "canBeEdited": false,
+        "edited": false
+      }
+    },
+    {
+      "objectType": "VISITOR_FULL",
+      "event": "upd",
+      "id": "6bc79dd4ce354be19a1aff40986a2373",
+      "data": {
+        "id": "1ec0c3e3db4c4844a8594f15d27f4771",
+        "icon": { "color": "#5fa0ea", "shape": "check" },
+        "channelUserId": null,
+        "channelUserName": null,
+        "channelType": null,
+        "channelId": null,
+        "creationTs": 1627410560.6509798,
+        "modificationTs": 1627410560.65105,
+        "stored": true,
+        "fields": { "name": "Посетитель" },
+        "hasProvidedFields": false,
+        "unreadMsgSinceTs": 1627410568.4284513
+      }
+    },
+    {
+      "objectType": "CHAT_READ_BY_VISITOR",
+      "event": "upd",
+      "id": "6bc79dd4ce354be19a1aff40986a2373",
+      "data": false
+    },
+    {
+      "objectType": "UNREAD_BY_VISITOR",
+      "event": "upd",
+      "id": "6bc79dd4ce354be19a1aff40986a2373",
+      "data": { "sinceTs": 1627410568.4284513, "msgCnt": 1 }
+    }
+  ]
+}

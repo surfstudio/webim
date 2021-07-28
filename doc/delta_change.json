@@ -1,0 +1,122 @@
+{
+  "revision": 11,
+  "fullUpdate": {
+    "currentTime": 1627464695.6322932,
+    "visitSessionId": "a7d43e72e26b496ab616150e7871e53b",
+    "pageId": "53f6390e73a8492fa3a0a013adc446ff",
+    "authToken": "fc974f3b43ae495f8af9d57855246086",
+    "visitorFull": {
+      "id": "fc283b99ff97436a8ce4e88e1b280cd4",
+      "icon": { "color": "#e061f4", "shape": "asterisk" },
+      "channelUserId": null,
+      "channelUserName": null,
+      "channelType": null,
+      "channelId": null,
+      "creationTs": 1627457757.360741,
+      "modificationTs": 1627457757.360821,
+      "stored": true,
+      "fields": { "name": "Посетитель" },
+      "hasProvidedFields": false,
+      "unreadMsgSinceTs": 1627464627.5431304
+    },
+    "visitor": {
+      "id": "fc283b99ff97436a8ce4e88e1b280cd4",
+      "icon": { "color": "#e061f4", "shape": "asterisk" },
+      "stored": true,
+      "hasProvidedFields": false,
+      "creationTs": 1627457757.360741,
+      "modificationTs": 1627457757.360821
+    },
+    "onlineOperators": true,
+    "onlineStatus": "online",
+    "state": "chat",
+    "chat": {
+      "id": 17899,
+      "clientSideId": "8ef56eaaf62d4ed4bbae7a2696e3f28d",
+      "state": "invitation",
+      "offline": false,
+      "creationTs": 1627464627.5405135,
+      "visitorTyping": false,
+      "visitorMessageDraft": null,
+      "readByVisitor": false,
+      "unreadByVisitorSinceTs": 1627464627.5431304,
+      "unreadByVisitorMsgCnt": 2,
+      "operatorTyping": false,
+      "unreadByOperatorSinceTs": null,
+      "subject": "",
+      "category": null,
+      "subcategory": null,
+      "messages": [
+        {
+          "id": "645ee8d7c5364d13bac8d509896dfd94",
+          "clientSideId": "7acfc4c99ee54838156a09e2d9a7fca4",
+          "channelSideId": null,
+          "kind": "operator",
+          "name": "Николай",
+          "avatar": "/webim/images/avatar/demo_33202.png",
+          "authorId": 33202,
+          "text": "Бонус 1",
+          "sessionId": "a7d43e72e26b496ab616150e7871e53b",
+          "ts": 1627464627.5431304,
+          "modifiedTs": 1627464627.5431304,
+          "canBeReplied": true,
+          "canBeEdited": false,
+          "edited": false
+        },
+        {
+          "id": "202cd604c2f84ad5bfa3cd608fe302a5",
+          "clientSideId": "ddd93de61654a20e22bfb1d26fb152b6",
+          "channelSideId": null,
+          "kind": "file_operator",
+          "name": "Николай",
+          "avatar": "/webim/images/avatar/demo_33202.png",
+          "authorId": 33202,
+          "text": "{\"guid\": \"1983b193f48245e8b1036a161cdf4bae\", \"filename\": \"68747470733a2f2f692e6962622e636f2f397142546633532f42756e6e65722d4c4f474f2e706e67.png\", \"content_type\": \"image/png\", \"client_content_type\": \"image/png\", \"size\": 435729, \"visitor_id\": \"fc283b99ff97436a8ce4e88e1b280cd4\", \"image\": {\"size\": {\"width\": 778, \"height\": 706}}}",
+          "sessionId": "a7d43e72e26b496ab616150e7871e53b",
+          "ts": 1627464639.58369,
+          "modifiedTs": 1627464639.6703851,
+          "data": {
+            "file": {
+              "state": "ready",
+              "progress": 100,
+              "desc": {
+                "filename": "68747470733a2f2f692e6962622e636f2f397142546633532f42756e6e65722d4c4f474f2e706e67.png",
+                "size": 435729,
+                "guid": "1983b193f48245e8b1036a161cdf4bae",
+                "content_type": "image/png",
+                "client_content_type": "image/png",
+                "visitor_id": "fc283b99ff97436a8ce4e88e1b280cd4",
+                "image": { "size": { "width": 778, "height": 706 } }
+              }
+            }
+          },
+          "canBeReplied": true,
+          "canBeEdited": false,
+          "edited": false
+        }
+      ],
+      "operatorIdToRate": {},
+      "needToBeClosed": false,
+      "operator": {
+        "id": 33202,
+        "fullname": "Николай",
+        "langToFullname": {},
+        "avatar": "/webim/images/avatar/demo_33202.png",
+        "departmentKeys": [
+          "telegram",
+          "test3",
+          "test2",
+          "mobile_department",
+          "rxd",
+          "tt"
+        ],
+        "sip": "10002715000033202",
+        "robotType": null
+      }
+    },
+    "pollingPeriod": 2,
+    "normalPollingPeriod": 10,
+    "cobrowsingSession": null,
+    "hasPreviousChats": true
+  }
+}

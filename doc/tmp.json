@@ -1,0 +1,121 @@
+{
+  "revision": 7,
+  "fullUpdate": {
+    "currentTime": 1627304591.2793155,
+    "visitSessionId": "560f5ecb228a47c391bd4d428e1f9d89",
+    "pageId": "baaeb94ec3b94bf3a5eff0d0c6d6d046",
+    "authToken": "f741a53c21aa484b8d5c64d68e6dddb6",
+    "visitorFull": {
+      "id": "45dc035a85874bca803c2aa2e4dd1392",
+      "icon": { "color": "#6eb766", "shape": "triangle" },
+      "channelUserId": null,
+      "channelUserName": null,
+      "channelType": null,
+      "channelId": null,
+      "creationTs": 1627130511.013834,
+      "modificationTs": 1627130511.01389,
+      "stored": true,
+      "fields": { "name": "Посетитель" },
+      "hasProvidedFields": false,
+      "unreadMsgSinceTs": null
+    },
+    "visitor": {
+      "id": "45dc035a85874bca803c2aa2e4dd1392",
+      "icon": { "color": "#6eb766", "shape": "triangle" },
+      "stored": true,
+      "hasProvidedFields": false,
+      "creationTs": 1627130511.013834,
+      "modificationTs": 1627130511.01389
+    },
+    "onlineOperators": true,
+    "onlineStatus": "online",
+    "state": "chat",
+    "chat": {
+      "id": 17868,
+      "clientSideId": "9f4229b0090a4bc1b0046280fba726a5",
+      "state": "queue",
+      "offline": false,
+      "creationTs": 1627303993.3860025,
+      "visitorTyping": false,
+      "visitorMessageDraft": null,
+      "readByVisitor": true,
+      "unreadByVisitorSinceTs": null,
+      "unreadByVisitorMsgCnt": null,
+      "operatorTyping": false,
+      "unreadByOperatorSinceTs": 1627303993.3877304,
+      "subject": "",
+      "category": null,
+      "subcategory": null,
+      "messages": [
+        {
+          "id": "2810c37eaf4f42769534c9cec2c3461a",
+          "clientSideId": "f13f75ea7e6d4a80ab3958a8d2507daf",
+          "channelSideId": null,
+          "kind": "info",
+          "name": "",
+          "avatar": null,
+          "authorId": null,
+          "text": "Добро пожаловать в демо-приложение для демонстрации чата. Чтобы обратиться к реальным консультантам, перейдите на сайт https://webim.ru",
+          "sessionId": "560f5ecb228a47c391bd4d428e1f9d89",
+          "ts": 1627303993.3875682,
+          "modifiedTs": 1627303993.3875682,
+          "data": {
+            "subKind": "hello-message",
+            "added_before_chat_ready": true
+          },
+          "canBeReplied": false,
+          "canBeEdited": false,
+          "edited": false
+        },
+        {
+          "id": "abb2d00442ed4141a214cc523f3229d8",
+          "clientSideId": "c1fcb3409b8643f18cbad56e642a6e49",
+          "channelSideId": null,
+          "kind": "info",
+          "name": "",
+          "avatar": null,
+          "authorId": null,
+          "text": "Оператор Тестовый Оператора включился в разговор",
+          "sessionId": "560f5ecb228a47c391bd4d428e1f9d89",
+          "ts": 1627303993.3879106,
+          "modifiedTs": 1627303993.3879106,
+          "data": {
+            "subKind": "operator-joined",
+            "redirected": false,
+            "resource": {
+              "key": "chat.message.operator_joined_chat",
+              "params": { "operator_name": "Тестовый Оператора" }
+            },
+            "added_before_chat_ready": true
+          },
+          "canBeReplied": false,
+          "canBeEdited": false,
+          "edited": false
+        },
+        {
+          "id": "92de0bdb69664f848afe2cd4bfc3eef9",
+          "clientSideId": "4745eb2107a14d7b9632c0125c179fcf",
+          "channelSideId": null,
+          "kind": "info",
+          "name": "",
+          "avatar": null,
+          "authorId": null,
+          "text": "Ваше сообщение принято, мы сможем ответить, когда операторы будут онлайн",
+          "sessionId": "560f5ecb228a47c391bd4d428e1f9d89",
+          "ts": 1627303993.8604667,
+          "modifiedTs": 1627303993.8604667,
+          "canBeReplied": false,
+          "canBeEdited": false,
+          "edited": false
+        }
+      ],
+      "operatorIdToRate": {},
+      "needToBeClosed": false,
+      "operator": null
+    },
+    "pollingPeriod": 2,
+    "normalPollingPeriod": 10,
+    "cobrowsingSession": null,
+    "hasPreviousChats": true
+  }
+}

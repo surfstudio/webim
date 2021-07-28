@@ -1,0 +1,27 @@
+{
+  "revision": 12,
+  "deltaList": [
+    {
+      "objectType": "CHAT_MESSAGE",
+      "event": "add",
+      "id": "2c999ea180c848d5aa85c5da5bc6f8b9",
+      "data": {
+        "id": "2c999ea180c848d5aa85c5da5bc6f8b9",
+        "clientSideId": "06bd27ca-04c9-4a16-abf5-6ea9d35fa0b7",
+        "channelSideId": null,
+        "kind": "visitor",
+        "name": "Посетитель",
+        "avatar": null,
+        "authorId": null,
+        "text": "dsfbsdfbdfb",
+        "sessionId": "560f5ecb228a47c391bd4d428e1f9d89",
+        "ts": 1627377577.359863,
+        "modifiedTs": 1627377577.359863,
+        "canBeReplied": true,
+        "canBeEdited": true,
+        "edited": false,
+        "read": false
+      }
+    }
+  ]
+}

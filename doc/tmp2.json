@@ -1,0 +1,39 @@
+{
+  "revision": 1,
+  "fullUpdate": {
+    "currentTime": 1627420091.347296,
+    "visitSessionId": "5d40283fd0dd4859b6c5b1561992ae4a",
+    "pageId": "ab11ff4aa7994cba8c912019e5a36380",
+    "authToken": "eb9699c4da0245db82e75c1fdaf9a288",
+    "visitorFull": {
+      "id": "48cb94b978194c06a225220cf7650785",
+      "icon": { "color": "#6eb766", "shape": "triangle" },
+      "channelUserId": null,
+      "channelUserName": null,
+      "channelType": null,
+      "channelId": null,
+      "creationTs": 1627420091.3415923,
+      "modificationTs": 1627420091.3417034,
+      "stored": null,
+      "fields": { "name": "Посетитель" },
+      "hasProvidedFields": false,
+      "unreadMsgSinceTs": null
+    },
+    "visitor": {
+      "id": "48cb94b978194c06a225220cf7650785",
+      "icon": { "color": "#6eb766", "shape": "triangle" },
+      "stored": null,
+      "hasProvidedFields": false,
+      "creationTs": 1627420091.3415923,
+      "modificationTs": 1627420091.3417034
+    },
+    "onlineOperators": true,
+    "onlineStatus": "online",
+    "state": "idle",
+    "chat": null,
+    "pollingPeriod": 10,
+    "normalPollingPeriod": 10,
+    "cobrowsingSession": null,
+    "hasPreviousChats": false
+  }
+}
