@@ -11,3 +11,7 @@ class WebimBuilderException extends WebimException {
 class WebimTypeException extends WebimException {
   WebimTypeException(String message) : super(message);
 }
+
+class WebimFileTypeException extends WebimException {
+  WebimFileTypeException(String message) : super(message);
+}

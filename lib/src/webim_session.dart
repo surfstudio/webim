@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -6,8 +7,10 @@ import 'package:flutter/scheduler.dart';
 
 import 'package:webim_sdk/src/api/webim_repository.dart';
 import 'package:webim_sdk/src/domain/message_event.dart';
+import 'package:webim_sdk/src/domain/chat_action.dart';
 import 'package:webim_sdk/src/webim_session_push_params.dart';
 import 'package:webim_sdk/src/domain/delta_response.dart';
+import 'package:webim_sdk/src/domain/default_response.dart';
 import 'package:webim_sdk/src/exception.dart';
 import 'package:webim_sdk/src/life_cycle_repository.dart';
 import 'package:webim_sdk/src/util/id_generator.dart';
@@ -89,6 +92,7 @@ class WebimSession {
       textValue: text,
       kind: WMMessageKind.VISITOR,
       clientSideId: IdGenerator.messageClientSideId,
+      tsSeconds: (DateTime.now().millisecondsSinceEpoch / 1000).toDouble(),
     );
     final messageEvent = DeltaItem<Message>(
       objectType: DeltaItemType.CHAT_MESSAGE,
@@ -96,6 +100,31 @@ class WebimSession {
       event: Event.ADD,
     );
     _cache.addMessageList([messageEvent]);
+
+    _sendAllSendingMessageFromCache();
+  }
+
+  Future<void> uploadFile(File file) async {
+    await _webimRepository.uploadFile(
+      file: file,
+      clientSideId: IdGenerator.messageClientSideId,
+      authorizationToken: _authorization.authToken,
+      pageId: _authorization.pageId,
+    );
+  }
+
+  void _sendAllSendingMessageFromCache() {
+    _cache.sendingMessage.forEach(
+      (message) => SslHttpOverrides.runSslOverridesZoned<Future<DefaultResponse>>(
+        () => _webimRepository.sendMessage(
+          action: ChatAction.ACTION_CHAT_MESSAGE.value,
+          authorizationToken: _authorization.authToken,
+          pageId: _authorization.pageId,
+          clientSideId: message.clientSideId,
+          message: message.textValue,
+        ),
+      ),
+    );
   }
 
   void _init() async {
@@ -111,7 +140,7 @@ class WebimSession {
     final httpClient = Dio(
       BaseOptions(
         baseUrl: url,
-        headers: _defaultHttpHeaders,
+        // headers: _defaultHttpHeaders,
       ),
     )..interceptors.addAll([
         if (kDebugMode)
@@ -119,18 +148,10 @@ class WebimSession {
             requestBody: true,
             responseBody: true,
           ),
-        InterceptorsWrapper(
-          onRequest: (options) {
-            options.headers.remove(Headers.contentTypeHeader);
-            options.headers.remove(Headers.contentLengthHeader);
-            return options;
-          },
-        ),
       ]);
 
     _webimRepository = WebimRepository(httpClient);
   }
-
 
   Future<void> _login() async {
     final result = await SslHttpOverrides.runSslOverridesZoned<Future<DeltaResponse>>(
@@ -167,7 +188,7 @@ class WebimSession {
       return;
     }
     _polling();
-    // _sendAllSendingMessageFromCache();
+    _sendAllSendingMessageFromCache();
   }
 
   Future<void> _polling() async {

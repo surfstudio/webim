@@ -2,21 +2,14 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:webim_sdk/src/domain/delta_response.dart';
 import 'package:webim_sdk/src/domain/message_event.dart';
 
 import 'package:webim_sdk/webim_sdk.dart';
 
-part 'webim_cache.g.dart';
-
-@JsonSerializable()
 class WebimCache {
-  @JsonKey(name: 'list')
   final List<Message> messageList;
-  @JsonKey(name: 'readingSince')
   int readingSince;
-  @JsonKey(name: 'readingBefore')
   int readingBefore;
 
   final StreamController<MessageEvent> eventStream;
@@ -25,10 +18,6 @@ class WebimCache {
     @required this.messageList,
     this.eventStream,
   });
-
-  factory WebimCache.fromJson(Map<String, dynamic> json) => _$WebimCacheFromJson(json);
-
-  Map<String, dynamic> toJson() => _$WebimCacheToJson(this);
 
   int get oldestTimestamp =>
       messageList.map<int>((message) => message.tsSeconds.round()).reduce(min);
@@ -72,7 +61,7 @@ class WebimCache {
   }
 
   List<Message> get sendingMessage =>
-      messageList.where((message) => message.status == WebimMessageState.sending);
+      messageList.where((message) => message.status == WebimMessageState.sending).toList();
 
   void setReadingSince(int timeStamp) {
     readingSince = timeStamp;

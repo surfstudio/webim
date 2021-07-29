@@ -146,13 +146,13 @@ void uploadFile() {
     'uploadFile',
     () async {
       final repository = _createRepository();
-      final file = File('test/asset/img.jpeg');
+      final file = File('test/asset/img.png');
       final result = await repository.uploadFile(
         file: file,
         chatMode: 'online',
-        clientSideId: 'ba5f36b9-86ac-4e15-8a85-bd848f6fe169',
-        pageId: 'fa6026bb331243e8814d98baf6600d6d',
-        authorizationToken: '6201ab127b6347abb94e68bac7fe2906',
+        clientSideId: 'ba5f36b9-86ac-4e15-8a85-bd848f6fe175',
+        pageId: 'afa67051d55a47ba828de5ffdb99b383',
+        authorizationToken: '12ba863fbecb4c61bc5dcb3ed818c2ac',
       );
 
       expect(result != null, true);
@@ -231,11 +231,11 @@ Future<void> sendMessage() async {
       // #endregion
 
       final repository = _createRepository();
-      final result = await repository.sendMessage(
+      DefaultResponse result = await repository.sendMessage(
         action: 'chat.message',
-        authorizationToken: '6201ab127b6347abb94e68bac7fe2906',
-        pageId: '9c5c08f4286a4a0bb4fbfe07b2fd4776',
-        clientSideId: '13ede407-b5e6-4b97-87d3-bb88083eb460',
+        authorizationToken: '12ba863fbecb4c61bc5dcb3ed818c2ac',
+        pageId: '2985abfafd5241948f1bf5aff3a00078',
+        clientSideId: '44ffbc64-8f12-4551-8a5f-11c391c74f38',
         message: 'AndX2 Test test message',
       );
 
@@ -244,6 +244,8 @@ Future<void> sendMessage() async {
     },
   );
 }
+
+
 
 getDeltaGroup() {
   return group(

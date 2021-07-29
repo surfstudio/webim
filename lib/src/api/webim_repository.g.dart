@@ -202,33 +202,11 @@ class _WebimRepository implements WebimRepository {
   }
 
   @override
-  _uploadFileUnparse(
-      file, chatMode, clientSideId, pageId, authorizationToken) async {
-    ArgumentError.checkNotNull(file, 'file');
-    ArgumentError.checkNotNull(chatMode, 'chatMode');
-    ArgumentError.checkNotNull(clientSideId, 'clientSideId');
-    ArgumentError.checkNotNull(pageId, 'pageId');
-    ArgumentError.checkNotNull(authorizationToken, 'authorizationToken');
+  _uploadFileUnparse({data}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = FormData();
-    _data.files.add(MapEntry(
-        'webim_upload_file',
-        MultipartFile.fromFileSync(file.path,
-            filename: 'image.jpeg',
-            contentType: MediaType.parse('image/jpeg'))));
-    if (chatMode != null) {
-      _data.fields.add(MapEntry('chat-mode', chatMode));
-    }
-    if (clientSideId != null) {
-      _data.fields.add(MapEntry('client-side-id', clientSideId));
-    }
-    if (pageId != null) {
-      _data.fields.add(MapEntry('page-id', pageId));
-    }
-    if (authorizationToken != null) {
-      _data.fields.add(MapEntry('auth-token', authorizationToken));
-    }
+    queryParameters.removeWhere((k, v) => v == null);
+    final _data = data;
     final Response<String> _result = await _dio.request('/l/v/m/upload',
         queryParameters: queryParameters,
         options: RequestOptions(

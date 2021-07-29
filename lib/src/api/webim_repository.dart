@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -9,13 +10,29 @@ import 'package:webim_sdk/src/domain/delta_response.dart';
 import 'package:webim_sdk/src/domain/history_response.dart';
 import 'package:webim_sdk/src/domain/default_response.dart';
 import 'package:webim_sdk/src/domain/upload_response.dart';
+import 'package:webim_sdk/src/exception.dart';
 
 part 'webim_repository.g.dart';
 
+const _fileContentType = {
+  'png': 'image/png',
+  'jpg': 'image/jpeg',
+  'jpeg': 'image/jpeg',
+  'doc': 'application/msword',
+  'rtf': 'application/rtf',
+  'gif': 'image/gif',
+  'txt': 'text/plain',
+  'pdf': 'application/pdf',
+  'docx': 'application/msword',
+  'webp': 'image/webp',
+  'ogg': 'audio/ogg',
+};
+
+const _maxFileSize = 10 * 1024 * 1024;
+
 @RestApi()
 abstract class WebimRepository {
-  static const String 
-      PARAMETER_ACTION = "action",
+  static const String PARAMETER_ACTION = "action",
       PARAMETER_APP_VERSION = "app-version",
       PARAMETER_AUTHORIZATION_TOKEN = "auth-token",
       PARAMETER_BUTTON_ID = "button-id",
@@ -140,31 +157,54 @@ abstract class WebimRepository {
       @Query(PARAMETER_SINCE) String since //microseconds
       );
 
-  @MultiPart()
   @POST(URL_SUFFIX_FILE_UPLOAD)
-  Future<String> _uploadFileUnparse(
-    @Part(name: PARAMETER_FILE_UPLOAD, fileName: 'image.jpeg', contentType: 'image/jpeg') File file,
-    @Part(name: PARAMETER_CHAT_MODE) String chatMode,
-    @Part(name: PARAMETER_CLIENT_SIDE_ID) String clientSideId,
-    @Part(name: PARAMETER_PAGE_ID) String pageId,
-    @Part(name: PARAMETER_AUTHORIZATION_TOKEN) String authorizationToken,
-  );
+  Future<String> _uploadFileUnparse({@Body() FormData data});
 }
 
 extension WebimrepositoryParserExtention on WebimRepository {
   Future<UploadResponse> uploadFile({
-    File file,
-    String chatMode,
-    String clientSideId,
-    String pageId,
-    String authorizationToken,
+    @required File file,
+    @required String clientSideId,
+    @required String pageId,
+    @required String authorizationToken,
+    String chatMode = 'online',
   }) {
-    return _uploadFileUnparse(
-      file,
-      chatMode,
-      clientSideId,
-      pageId,
-      authorizationToken,
-    ).then((json) => UploadResponse.fromJson(jsonDecode(json)));
+    final _data = FormData();
+    final filename = file?.path?.split('/')?.last;
+    final contentType = _fileContentType[filename?.split('.')?.last];
+    if (filename == null || contentType == null) {
+      throw WebimFileTypeException(
+          'Filetype not allowed. Allowed type list: png, jpg, jpeg, doc, rtf, gif, txt, pdf, docx, webp, ogg');
+    }
+    final fileSize = file.lengthSync();
+    if (fileSize > _maxFileSize)
+      throw WebimFileTypeException('Filetype too large. Max file size 10 MB.');
+    if (file != null) {
+      _data.files.add(
+        MapEntry(
+          'webim_upload_file',
+          MultipartFile.fromFileSync(
+            file.path,
+            filename: filename,
+            contentType: MediaType.parse(contentType),
+          ),
+        ),
+      );
+    }
+    if (chatMode != null) {
+      _data.fields.add(MapEntry('chat-mode', chatMode));
+    }
+    if (clientSideId != null) {
+      _data.fields.add(MapEntry('client-side-id', clientSideId));
+    }
+    if (pageId != null) {
+      _data.fields.add(MapEntry('page-id', pageId));
+    }
+    if (authorizationToken != null) {
+      _data.fields.add(MapEntry('auth-token', authorizationToken));
+    }
+
+    return _uploadFileUnparse(data: _data)
+        .then((json) => UploadResponse.fromJson(jsonDecode(json)));
   }
 }
