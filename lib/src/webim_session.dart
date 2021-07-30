@@ -25,6 +25,7 @@ final _defaultHttpHeaders = <String, dynamic>{
   'User-Agent': 'Android: Webim-Client/0.0.0-indev (sdk_gphone_x86_arm; Android 11)',
   'x-webim-sdk-version': '0.0.0-indev'
 };
+const _maxFileUploadTimeout = const Duration(seconds: 180);
 
 class WebimSession {
   WebimSession._(
@@ -57,6 +58,7 @@ class WebimSession {
   LifeCycleRepository _lifeCycleRepository;
   WebimCache _cache;
   int _currentSyncRevision;
+  bool _isFileUploading = false;
 
   WebimAuthorization _authorization;
 
@@ -104,12 +106,48 @@ class WebimSession {
     _sendAllSendingMessageFromCache();
   }
 
-  Future<void> uploadFile(File file) async {
-    await _webimRepository.uploadFile(
-      file: file,
+  void uploadFile(File file) {
+    final message = Message(
+      textValue: file.path,
+      kind: WMMessageKind.FILE_FROM_VISITOR,
       clientSideId: IdGenerator.messageClientSideId,
-      authorizationToken: _authorization.authToken,
-      pageId: _authorization.pageId,
+      tsSeconds: (DateTime.now().millisecondsSinceEpoch / 1000).toDouble(),
+      data: MessageData(
+        file: MessageFile(
+          state: FileState.UPLOAD,
+          desc: MessageFileDescription(
+            filename: file.path.split('/').last,
+          ),
+        ),
+      ),
+    );
+    final messageEvent = DeltaItem<Message>(
+      objectType: DeltaItemType.CHAT_MESSAGE,
+      data: message,
+      event: Event.ADD,
+    );
+    _cache.addMessageList([messageEvent]);
+
+    _sendAllSendingFileMessageFromCache();
+  }
+
+  void _sendAllSendingFileMessageFromCache() {
+    _cache.sendingFileMessages.forEach(
+      (message) => SslHttpOverrides.runSslOverridesZoned(
+        () {
+          if (_isFileUploading) return;
+          _isFileUploading = true;
+          _webimRepository
+              .uploadFile(
+                file: File(message.textValue),
+                clientSideId: message.clientSideId,
+                authorizationToken: _authorization.authToken,
+                pageId: _authorization.pageId,
+              )
+              .timeout(_maxFileUploadTimeout)
+              .whenComplete(() => _isFileUploading = false);
+        },
+      ),
     );
   }
 
@@ -140,7 +178,7 @@ class WebimSession {
     final httpClient = Dio(
       BaseOptions(
         baseUrl: url,
-        // headers: _defaultHttpHeaders,
+        headers: _defaultHttpHeaders,
       ),
     )..interceptors.addAll([
         if (kDebugMode)
@@ -189,6 +227,7 @@ class WebimSession {
     }
     _polling();
     _sendAllSendingMessageFromCache();
+    _sendAllSendingFileMessageFromCache();
   }
 
   Future<void> _polling() async {

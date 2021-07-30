@@ -60,8 +60,15 @@ class WebimCache {
     return modifiedEventList;
   }
 
-  List<Message> get sendingMessage =>
-      messageList.where((message) => message.status == WebimMessageState.sending).toList();
+  List<Message> get sendingMessage => messageList
+      .where((message) =>
+          message.status == WebimMessageState.sending && message.kind == WMMessageKind.VISITOR)
+      .toList();
+
+  List<Message> get sendingFileMessages => messageList
+      .where((message) =>
+          message.status == WebimMessageState.sending && message.kind == WMMessageKind.FILE_FROM_VISITOR)
+      .toList();
 
   void setReadingSince(int timeStamp) {
     readingSince = timeStamp;
