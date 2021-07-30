@@ -66,17 +66,17 @@ class WebimSession {
 
   List<Message> get messageThread => List.from(_cache.messageList)..sort();
 
-  void get resume {
+  void resume() {
     _isPaused = false;
 
     if (_authorization == null) _login();
   }
 
-  void get pause {
+  void pause() {
     _isPaused = true;
   }
 
-  void get dispose {
+  void dispose() {
     _isPaused = true;
     _isDisposed = true;
     _lifeCycleRepository.removeListener(_onLifeCycleEvent);
