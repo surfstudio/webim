@@ -86,9 +86,9 @@ class WebimSession {
     messageEventStream.close();
   }
 
-  void get isPaused => _isPaused;
+  bool get isPaused => _isPaused;
 
-  void get isDisposed => _isDisposed;
+  bool get isDisposed => _isDisposed;
 
   void sendMessage(String text) {
     final message = Message(

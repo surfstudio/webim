@@ -37,26 +37,31 @@ class WebimCache {
       if (item.objectType == DeltaItemType.CHAT_MESSAGE) {
         final message = item.data as Message;
         final existMsg = messageList.firstWhere(
-          (element) => message.clientSideId == element.clientSideId,
+          (element) => element == message,
           orElse: () => null,
         );
-        if (existMsg == null) {
-          modifiedEventList.add(MessageEvent.added(message));
-          messageList.add(message);
-          eventStream.add(MessageEvent.added(message));
-        } else if (existMsg == message) {
+        if (item.event == Event.DELETE) {
+          modifiedEventList.add(MessageEvent.removed(existMsg));
           messageList.remove(existMsg);
-          messageList.add(message);
-          eventStream.add(MessageEvent.changed(from: existMsg, to: message));
         } else {
-          modifiedEventList.add(MessageEvent.changed(from: existMsg, to: message));
-          messageList.remove(existMsg);
-          messageList.add(message);
-          eventStream.add(MessageEvent.changed(from: existMsg, to: message));
+          if (existMsg == null) {
+            modifiedEventList.add(MessageEvent.added(message));
+            messageList.add(message);
+            eventStream.add(MessageEvent.added(message));
+          } else if (existMsg == message) {
+            messageList.remove(existMsg);
+            messageList.add(message);
+            eventStream.add(MessageEvent.changed(from: existMsg, to: message));
+          } else {
+            modifiedEventList.add(MessageEvent.changed(from: existMsg, to: message));
+            messageList.remove(existMsg);
+            messageList.add(message);
+            eventStream.add(MessageEvent.changed(from: existMsg, to: message));
+          }
         }
       }
     }
-    print(messageList);
+
     return modifiedEventList;
   }
 
@@ -67,7 +72,8 @@ class WebimCache {
 
   List<Message> get sendingFileMessages => messageList
       .where((message) =>
-          message.status == WebimMessageState.sending && message.kind == WMMessageKind.FILE_FROM_VISITOR)
+          message.status == WebimMessageState.sending &&
+          message.kind == WMMessageKind.FILE_FROM_VISITOR)
       .toList();
 
   void setReadingSince(int timeStamp) {

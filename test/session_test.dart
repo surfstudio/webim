@@ -41,6 +41,8 @@ void main() {
   );
 }
 
+// https://demo.webim.ru/l/v/m/download/4cd1180ff13b49c7a421e30472124407/img.png?page-id=3b00878d78c0478b940e11aedbbd2c79&expires=1627690097&hash=97edd2cfb980a865135ccd8085f8ae8a42609ec2c1bc25bb6dc2d1ff2cd02cb7
+// https://demo.webim.ru/l/v/m/download/44fd8313c01c4737989b282a40b81b0e/img.png?page-id=3b00878d78c0478b940e11aedbbd2c79&expires=1627689147&hash=2f0bb4f7331912d0a83f780203a7d0bec8d397fa802e3f5fc44355a9350f2519
 void createSession() {
   return test(
     'Build session test',

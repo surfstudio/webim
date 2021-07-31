@@ -78,7 +78,11 @@ class Message implements Comparable {
   @override
   bool operator ==(Object other) {
     if (other is Message) {
-      if (clientSideId != other.clientSideId) return false;
+      if (other.clientSideId != null) {
+        if (clientSideId != other.clientSideId) return false;
+      } else {
+        if (serverId != null && other.serverId != null && serverId == other.serverId) return true;
+      }
       if (tsSeconds?.round() != other.tsSeconds?.round()) return false;
       if (modified?.round() != other.modified?.round()) return false;
       return true;
