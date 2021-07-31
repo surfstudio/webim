@@ -8,6 +8,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:webim_sdk/src/api/webim_repository.dart';
 import 'package:webim_sdk/src/domain/message_event.dart';
 import 'package:webim_sdk/src/domain/chat_action.dart';
+import 'package:webim_sdk/src/util/file_download_url_factory.dart';
 import 'package:webim_sdk/src/webim_session_push_params.dart';
 import 'package:webim_sdk/src/domain/delta_response.dart';
 import 'package:webim_sdk/src/domain/default_response.dart';
@@ -129,6 +130,17 @@ class WebimSession {
     _cache.addMessageList([messageEvent]);
 
     _sendAllSendingFileMessageFromCache();
+  }
+
+  String messageFileDownloadUrl(Message message) {
+    final guid = message.data?.file?.desc?.guid;
+    if (guid == null) return null;
+    final urlFactory = FileDownloadUrlFactory(
+      serverUrl: ServerUrlParser.url(_accountName),
+      pageId: _authorization.pageId,
+      authToken: _authorization.authToken,
+    );
+    return urlFactory.url(message.data?.file?.desc?.filename, guid);
   }
 
   void _sendAllSendingFileMessageFromCache() {
@@ -267,10 +279,10 @@ class WebimSession {
   void _onLifeCycleEvent() {
     final state = _lifeCycleRepository.state;
     if (state == AppLifecycleState.paused) {
-      this.pause;
+      this.pause();
     }
     if (state == AppLifecycleState.resumed) {
-      this.resume;
+      this.resume();
     }
   }
 }

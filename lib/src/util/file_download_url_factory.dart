@@ -20,7 +20,7 @@ class FileDownloadUrlFactory {
   String url(String fileName, String guid) {
     final fileUrl = StringBuffer();
     fileUrl.write(Uri.parse(serverUrl));
-    fileUrl.write('l/v/m/download/');
+    fileUrl.write('/l/v/m/download/');
     fileUrl.write(guid);
     fileUrl.write('/');
     fileUrl.write(Uri.encodeFull(fileName));
