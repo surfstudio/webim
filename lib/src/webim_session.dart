@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'package:webim_sdk/src/api/webim_repository.dart';
+import 'package:webim_sdk/src/domain/history_response.dart';
 import 'package:webim_sdk/src/domain/message_event.dart';
 import 'package:webim_sdk/src/domain/chat_action.dart';
 import 'package:webim_sdk/src/util/file_download_url_factory.dart';
@@ -143,6 +144,36 @@ class WebimSession {
     return urlFactory.url(message.data?.file?.desc?.filename, guid);
   }
 
+  Future<HistoryBeforeResponse> getLatestMessages() async {
+    return _webimRepository
+        .getHistoryBefore(
+      _authorization.pageId,
+      _authorization.authToken,
+      _cache.oldestTimestamp * 1000,
+    )
+        .then(
+      (response) {
+        if (response.data?.messages?.isNotEmpty ?? false) {
+          final events = response.data.messages
+              .map<DeltaItem<Message>>(
+                (message) => DeltaItem<Message>(
+                  objectType: DeltaItemType.CHAT_MESSAGE,
+                  data: message,
+                  event: Event.ADD,
+                ),
+              )
+              .toList();
+          _cache.addMessageList(events);
+        }
+        return response;
+      },
+    );
+  }
+
+  Future<DefaultResponse> setChatReadByVisitor() {
+    return _webimRepository.setChatRead();
+  }
+
   void _sendAllSendingFileMessageFromCache() {
     _cache.sendingFileMessages.forEach(
       (message) => SslHttpOverrides.runSslOverridesZoned(
@@ -206,7 +237,7 @@ class WebimSession {
   Future<void> _login() async {
     final result = await SslHttpOverrides.runSslOverridesZoned<Future<DeltaResponse>>(
       () => _webimRepository.getLogin(
-        visitorFieldsJsonString: _visitorFields,
+        visitorExtJsonString: _visitorFields,
         location: _location,
         deviceId: _deviceId,
         platform: _platform,

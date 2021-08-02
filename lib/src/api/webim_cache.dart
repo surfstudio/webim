@@ -35,15 +35,22 @@ class WebimCache {
     final modifiedEventList = <MessageEvent>[];
     for (var item in list) {
       if (item.objectType == DeltaItemType.CHAT_MESSAGE) {
-        final message = item.data as Message;
-        final existMsg = messageList.firstWhere(
-          (element) => element == message,
-          orElse: () => null,
-        );
         if (item.event == Event.DELETE) {
-          modifiedEventList.add(MessageEvent.removed(existMsg));
-          messageList.remove(existMsg);
+          final existMsg = messageList.firstWhere(
+            (element) => element == Message(serverId: item.id),
+            orElse: () => null,
+          );
+          if (existMsg != null) {            
+            messageList.remove(existMsg);
+            modifiedEventList.add(MessageEvent.removed(existMsg));
+            eventStream.add(MessageEvent.removed(existMsg));
+          }
         } else {
+          final message = item.data as Message;
+          final existMsg = messageList.firstWhere(
+            (element) => element == message,
+            orElse: () => null,
+          );
           if (existMsg == null) {
             modifiedEventList.add(MessageEvent.added(message));
             messageList.add(message);
