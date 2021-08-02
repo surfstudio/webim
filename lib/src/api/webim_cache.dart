@@ -36,11 +36,17 @@ class WebimCache {
     for (var item in list) {
       if (item.objectType == DeltaItemType.CHAT_MESSAGE) {
         if (item.event == Event.DELETE) {
-          final existMsg = messageList.firstWhere(
+          Message existMsg = messageList.firstWhere(
             (element) => element == Message(serverId: item.id),
             orElse: () => null,
           );
-          if (existMsg != null) {            
+          if (existMsg == null && item.data != null && item.data is Message) {
+            existMsg = messageList.firstWhere(
+              (element) => element == item.data,
+              orElse: () => null,
+            );
+          }
+          if (existMsg != null) {
             messageList.remove(existMsg);
             modifiedEventList.add(MessageEvent.removed(existMsg));
             eventStream.add(MessageEvent.removed(existMsg));

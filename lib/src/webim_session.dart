@@ -9,6 +9,7 @@ import 'package:webim_sdk/src/api/webim_repository.dart';
 import 'package:webim_sdk/src/domain/history_response.dart';
 import 'package:webim_sdk/src/domain/message_event.dart';
 import 'package:webim_sdk/src/domain/chat_action.dart';
+import 'package:webim_sdk/src/util/file_content_type_converter.dart';
 import 'package:webim_sdk/src/util/file_download_url_factory.dart';
 import 'package:webim_sdk/src/webim_session_push_params.dart';
 import 'package:webim_sdk/src/domain/delta_response.dart';
@@ -109,6 +110,7 @@ class WebimSession {
   }
 
   void uploadFile(File file) {
+    final filename = file.path.split('/').last;
     final message = Message(
       textValue: file.path,
       kind: WMMessageKind.FILE_FROM_VISITOR,
@@ -118,7 +120,9 @@ class WebimSession {
         file: MessageFile(
           state: FileState.UPLOAD,
           desc: MessageFileDescription(
-            filename: file.path.split('/').last,
+            filename: filename,
+            size: file.lengthSync(),
+            contentType: FileContentTypeConverter.contentType(filename),
           ),
         ),
       ),
@@ -174,24 +178,108 @@ class WebimSession {
     return _webimRepository.setChatRead();
   }
 
+
+  void reUploadFile(Message message) {
+    _cache.addMessageList([
+      DeltaItem<Message>(
+          objectType: DeltaItemType.CHAT_MESSAGE,
+          event: Event.ADD,
+          data: Message(
+            textValue: message.textValue,
+            kind: message.kind,
+            clientSideId: message.clientSideId,
+            tsSeconds: message.tsSeconds,
+            data: MessageData(
+              file: MessageFile(
+                state: FileState.UPLOAD,
+                desc: MessageFileDescription(
+                  filename: message.data?.file?.desc?.filename,
+                  size: message.data?.file?.desc?.size,
+                  contentType: message.data?.file?.desc?.contentType,
+                ),
+              ),
+            ),
+          ))
+    ]);
+  }
+
+  void removeErrorUploadFile(Message message) {
+    _cache.addMessageList([
+      DeltaItem<Message>(
+          objectType: DeltaItemType.CHAT_MESSAGE,
+          event: Event.DELETE,
+          data: Message(
+            textValue: message.textValue,
+            kind: message.kind,
+            clientSideId: message.clientSideId,
+            tsSeconds: message.tsSeconds,
+            data: MessageData(
+              file: MessageFile(
+                state: FileState.ERROR,
+                desc: MessageFileDescription(
+                  filename: message.data?.file?.desc?.filename,
+                  size: message.data?.file?.desc?.size,
+                  contentType: message.data?.file?.desc?.contentType,
+                ),
+              ),
+            ),
+          ))
+    ]);
+  }
+
   void _sendAllSendingFileMessageFromCache() {
     _cache.sendingFileMessages.forEach(
       (message) => SslHttpOverrides.runSslOverridesZoned(
         () {
           if (_isFileUploading) return;
+          if (message.data.file.state == FileState.ERROR) return;
           _isFileUploading = true;
-          _webimRepository
-              .uploadFile(
-                file: File(message.textValue),
-                clientSideId: message.clientSideId,
-                authorizationToken: _authorization.authToken,
-                pageId: _authorization.pageId,
-              )
-              .timeout(_maxFileUploadTimeout)
-              .whenComplete(() => _isFileUploading = false);
+          try {
+            _webimRepository
+                .uploadFile(
+              file: File(message.textValue),
+              clientSideId: message.clientSideId,
+              authorizationToken: _authorization.authToken,
+              pageId: _authorization.pageId,
+            )
+                .timeout(
+              _maxFileUploadTimeout,
+              onTimeout: () async {
+                _onFileUploadError(message);
+                return null;
+              },
+            ).whenComplete(() => _isFileUploading = false);
+          } catch (e) {
+            _onFileUploadError(message);
+          }
         },
       ),
     );
+  }
+
+  void _onFileUploadError(Message message) {
+    _isFileUploading = false;
+    _cache.addMessageList([
+      DeltaItem<Message>(
+          objectType: DeltaItemType.CHAT_MESSAGE,
+          event: Event.ADD,
+          data: Message(
+            textValue: message.textValue,
+            kind: message.kind,
+            clientSideId: message.clientSideId,
+            tsSeconds: message.tsSeconds,
+            data: MessageData(
+              file: MessageFile(
+                state: FileState.ERROR,
+                desc: MessageFileDescription(
+                  filename: message.data?.file?.desc?.filename,
+                  size: message.data?.file?.desc?.size,
+                  contentType: message.data?.file?.desc?.contentType,
+                ),
+              ),
+            ),
+          ))
+    ]);
   }
 
   void _sendAllSendingMessageFromCache() {

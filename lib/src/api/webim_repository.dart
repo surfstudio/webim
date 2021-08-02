@@ -11,22 +11,9 @@ import 'package:webim_sdk/src/domain/history_response.dart';
 import 'package:webim_sdk/src/domain/default_response.dart';
 import 'package:webim_sdk/src/domain/upload_response.dart';
 import 'package:webim_sdk/src/exception.dart';
+import 'package:webim_sdk/src/util/file_content_type_converter.dart';
 
 part 'webim_repository.g.dart';
-
-const _fileContentType = {
-  'png': 'image/png',
-  'jpg': 'image/jpeg',
-  'jpeg': 'image/jpeg',
-  'doc': 'application/msword',
-  'rtf': 'application/rtf',
-  'gif': 'image/gif',
-  'txt': 'text/plain',
-  'pdf': 'application/pdf',
-  'docx': 'application/msword',
-  'webp': 'image/webp',
-  'ogg': 'audio/ogg',
-};
 
 const _maxFileSize = 10 * 1024 * 1024;
 
@@ -171,7 +158,7 @@ extension WebimrepositoryParserExtention on WebimRepository {
   }) {
     final _data = FormData();
     final filename = file?.path?.split('/')?.last;
-    final contentType = _fileContentType[filename?.split('.')?.last];
+    final contentType = FileContentTypeConverter.contentType(filename);
     if (filename == null || contentType == null) {
       throw WebimFileTypeException(
           'Filetype not allowed. Allowed type list: png, jpg, jpeg, doc, rtf, gif, txt, pdf, docx, webp, ogg');
