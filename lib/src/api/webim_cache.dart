@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+
 import 'package:webim_sdk/src/domain/delta_response.dart';
 import 'package:webim_sdk/src/domain/message_event.dart';
 
@@ -19,11 +20,13 @@ class WebimCache {
     this.eventStream,
   });
 
-  int get oldestTimestamp =>
-      messageList.map<int>((message) => message.tsSeconds.round()).reduce(min);
+  int get oldestTimestamp => messageList.isEmpty
+      ? -1
+      : messageList.map<int>((message) => message.tsSeconds.round()).reduce(min);
 
-  int get newestTimestamp =>
-      messageList.map<int>((message) => message.tsSeconds.round()).reduce(max);
+  int get newestTimestamp => messageList.isEmpty
+      ? -1
+      : messageList.map<int>((message) => message.tsSeconds.round()).reduce(max);
 
   void replaceWithMessageList(List<Message> list) {
     messageList.clear();
