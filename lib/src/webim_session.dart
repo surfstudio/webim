@@ -227,6 +227,10 @@ class WebimSession {
     ]);
   }
 
+  int get timeStampNewestMessage => _cache.newestTimestamp; 
+
+  int get timeStampOldestMessage => _cache.oldestTimestamp; 
+
   void _sendAllSendingFileMessageFromCache() {
     _cache.sendingFileMessages.forEach(
       (message) => SslHttpOverrides.runSslOverridesZoned(
