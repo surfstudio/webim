@@ -40,7 +40,12 @@ class WebimCache {
       if (item.objectType == DeltaItemType.CHAT_MESSAGE) {
         if (item.event == Event.DELETE) {
           Message existMsg = messageList.firstWhere(
-            (element) => element == Message(serverId: item.id),
+            (element) {
+              if (item.data == null) return element == Message(serverId: item.id);
+              if (item.data is Message)
+                return element == Message(serverId: item.id, clientSideId: item.data?.clientSideId);
+              return false;
+            },
             orElse: () => null,
           );
           if (existMsg == null && item.data != null && item.data is Message) {
