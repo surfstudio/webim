@@ -9,6 +9,7 @@ import 'package:webim_sdk/src/api/webim_repository.dart';
 import 'package:webim_sdk/src/domain/history_response.dart';
 import 'package:webim_sdk/src/domain/message_event.dart';
 import 'package:webim_sdk/src/domain/chat_action.dart';
+import 'package:webim_sdk/src/util/client_title_factory.dart';
 import 'package:webim_sdk/src/util/file_content_type_converter.dart';
 import 'package:webim_sdk/src/util/file_download_url_factory.dart';
 import 'package:webim_sdk/src/webim_session_push_params.dart';
@@ -24,10 +25,12 @@ import 'package:webim_sdk/src/util/ssl_http_overrides.dart';
 import 'package:webim_sdk/webim_sdk.dart';
 
 const _pollingDuration = const Duration(seconds: 20);
-final _defaultHttpHeaders = <String, dynamic>{
-  'User-Agent': 'Android: Webim-Client/0.0.0-indev (sdk_gphone_x86_arm; Android 11)',
-  'x-webim-sdk-version': '0.0.0-indev'
-};
+final _defaultHttpHeaders = <String, dynamic>{'x-webim-sdk-version': '0.0.0-indev'};
+
+const _iosUserAgent =
+    'iOS: Webim-Client 3.35.0; (iPhone6,1; iOS10.1.1; Bundle ID and version: "none" "none")';
+const _androidUserAgent = 'Android: Webim-Client/0.0.0-indev (sdk_gphone_x86_arm; Android 11)';
+
 const _maxFileUploadTimeout = const Duration(seconds: 180);
 
 class WebimSession {
@@ -178,7 +181,6 @@ class WebimSession {
     return _webimRepository.setChatRead();
   }
 
-
   void reUploadFile(Message message) {
     _cache.addMessageList([
       DeltaItem<Message>(
@@ -227,9 +229,9 @@ class WebimSession {
     ]);
   }
 
-  int get timeStampNewestMessage => _cache.newestTimestamp; 
+  int get timeStampNewestMessage => _cache.newestTimestamp;
 
-  int get timeStampOldestMessage => _cache.oldestTimestamp; 
+  int get timeStampOldestMessage => _cache.oldestTimestamp;
 
   void _sendAllSendingFileMessageFromCache() {
     _cache.sendingFileMessages.forEach(
@@ -310,10 +312,15 @@ class WebimSession {
 
     final url = ServerUrlParser.url(_accountName);
 
+    final httpHeaders = _defaultHttpHeaders;
+
+    if (Platform.isIOS) httpHeaders['User-Agent'] = _iosUserAgent;
+    if (Platform.isAndroid) httpHeaders['User-Agent'] = _androidUserAgent;
+
     final httpClient = Dio(
       BaseOptions(
         baseUrl: url,
-        headers: _defaultHttpHeaders,
+        headers: httpHeaders,
       ),
     )..interceptors.addAll([
         if (kDebugMode)
@@ -335,6 +342,7 @@ class WebimSession {
         platform: _platform,
         pushService: _pushService,
         pushToken: _pushToken,
+        title: ClientTitleFactory.defaultTitle,
       ),
     );
     _authorization = WebimAuthorization.fromDeltaResponse(
