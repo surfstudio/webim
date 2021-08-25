@@ -83,6 +83,7 @@ class WebimSession {
   }
 
   void dispose() {
+    if (_isDisposed) return;
     _isPaused = true;
     _isDisposed = true;
     _lifeCycleRepository.removeListener(_onLifeCycleEvent);
