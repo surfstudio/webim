@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:webim_sdk/src/util/num_extension.dart';
 import 'package:webim_sdk/src/exception.dart';
 
 part 'message.g.dart';
@@ -42,11 +43,11 @@ class Message implements Comparable {
   @JsonKey(name: "text")
   final String textValue;
   @JsonKey(name: "ts")
-  final double tsSeconds;
+  final int tsSeconds;
   @JsonKey(name: "modifiedTs")
   final double modified;
   @JsonKey(name: "ts_m")
-  final int tsMicros = -1;
+  final int tsMicros;
   @JsonKey(name: "quote")
   final Quote quote;
 
@@ -66,10 +67,12 @@ class Message implements Comparable {
     this.read,
     this.sessionId,
     this.textValue,
-    this.tsSeconds,
+    int tsSeconds,
+    int tsMicros,
     this.quote,
     this.modified,
-  });
+  })  : tsMicros = tsMicros ?? tsSeconds?.round()?.fromSecToMicro() ?? -1,
+        tsSeconds = tsSeconds?.round() ?? tsMicros?.fromMicroToSec() ?? -1;
 
   factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
 

@@ -25,7 +25,8 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
     read: json['read'] as bool,
     sessionId: json['sessionId'] as String,
     textValue: json['text'] as String,
-    tsSeconds: (json['ts'] as num)?.toDouble(),
+    tsSeconds: (json['ts'] as num)?.toDouble()?.round(),
+    tsMicros: (json['ts_m'] as num)?.toInt(),
     quote: json['quote'] == null
         ? null
         : Quote.fromJson(json['quote'] as Map<String, dynamic>),
@@ -50,6 +51,7 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'sessionId': instance.sessionId,
       'text': instance.textValue,
       'ts': instance.tsSeconds,
+      'ts_m': instance.tsMicros,
       'modifiedTs': instance.modified,
       'quote': instance.quote,
     };
