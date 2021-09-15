@@ -101,7 +101,7 @@ class WebimSession {
       textValue: text,
       kind: WMMessageKind.VISITOR,
       clientSideId: IdGenerator.messageClientSideId,
-      tsSeconds: (DateTime.now().millisecondsSinceEpoch / 1000).toDouble(),
+      tsSeconds: (DateTime.now().millisecondsSinceEpoch / 1000).round(),
     );
     final messageEvent = DeltaItem<Message>(
       objectType: DeltaItemType.CHAT_MESSAGE,
@@ -119,7 +119,7 @@ class WebimSession {
       textValue: file.path,
       kind: WMMessageKind.FILE_FROM_VISITOR,
       clientSideId: IdGenerator.messageClientSideId,
-      tsSeconds: (DateTime.now().millisecondsSinceEpoch / 1000).toDouble(),
+      tsSeconds: (DateTime.now().millisecondsSinceEpoch / 1000).round(),
       data: MessageData(
         file: MessageFile(
           state: FileState.UPLOAD,

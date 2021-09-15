@@ -61,7 +61,7 @@ abstract class WebimRepository {
       PARAMETER_SURVEY_QUESTION_ID = "question-id",
       PARAMETER_SURVEY_ID = "survey-id",
       PARAMETER_TIMESTAMP = "ts",
-      PARAMETER_TIMESTAMP_BEFORE = "before-ts",
+      PARAMETER_TIMESTAMP_BEFORE = "before",
       PARAMETER_TITLE = "title",
       PARAMETER_VISIT_SESSION_ID = "visit-session-id",
       PARAMETER_VISITOR_EXT = "visitor-ext",
