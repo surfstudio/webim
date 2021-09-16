@@ -20,13 +20,23 @@ class WebimCache {
     this.eventStream,
   });
 
+  /// время последнего сообщения
   int get oldestTimestamp => messageList.isEmpty
       ? -1
       : messageList.map<int>((message) => message.tsSeconds.round()).reduce(min);
 
+  /// время самого нового сообщения
   int get newestTimestamp => messageList.isEmpty
       ? -1
       : messageList.map<int>((message) => message.tsSeconds.round()).reduce(max);
+
+  /// время последнего непрочитанного сообщения
+  int get oldestUnreadTimestamp => messageList.isEmpty
+      ? -1
+      : messageList
+          .where((message) => !(message.read ?? false))
+          .map<int>((message) => message.tsSeconds.round())
+          .reduce(min);
 
   void replaceWithMessageList(List<Message> list) {
     messageList.clear();
@@ -34,7 +44,8 @@ class WebimCache {
     eventStream.add(MessageEvent.fullUpdate(List.from(messageList)..sort()));
   }
 
-  List<MessageEvent> addMessageList(List<DeltaItem> list) {
+  /// [silently] - добавление без оповещения подписчиков
+  List<MessageEvent> addMessageList(List<DeltaItem> list, {bool silently = false}) {
     final modifiedEventList = <MessageEvent>[];
     for (var item in list) {
       if (item.objectType == DeltaItemType.CHAT_MESSAGE) {
@@ -57,7 +68,7 @@ class WebimCache {
           if (existMsg != null) {
             messageList.remove(existMsg);
             modifiedEventList.add(MessageEvent.removed(existMsg));
-            eventStream.add(MessageEvent.removed(existMsg));
+            if (!silently) eventStream.add(MessageEvent.removed(existMsg));
           }
         } else {
           final message = item.data as Message;
@@ -68,16 +79,16 @@ class WebimCache {
           if (existMsg == null) {
             modifiedEventList.add(MessageEvent.added(message));
             messageList.add(message);
-            eventStream.add(MessageEvent.added(message));
+            if (!silently) eventStream.add(MessageEvent.added(message));
           } else if (existMsg == message) {
             messageList.remove(existMsg);
             messageList.add(message);
-            eventStream.add(MessageEvent.changed(from: existMsg, to: message));
+            if (!silently) eventStream.add(MessageEvent.changed(from: existMsg, to: message));
           } else {
             modifiedEventList.add(MessageEvent.changed(from: existMsg, to: message));
             messageList.remove(existMsg);
             messageList.add(message);
-            eventStream.add(MessageEvent.changed(from: existMsg, to: message));
+            if (!silently) eventStream.add(MessageEvent.changed(from: existMsg, to: message));
           }
         }
       }
