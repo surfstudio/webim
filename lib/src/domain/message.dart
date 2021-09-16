@@ -101,6 +101,30 @@ class Message implements Comparable {
     }
     throw WebimTypeException('other is! Message');
   }
+
+  Message copyWith({bool read}) {
+    return Message(
+      authorId: authorId,
+      avatar: avatar,
+      canBeReplied: canBeReplied,
+      clientSideId: clientSideId,
+      data: data,
+      canBeEdited: canBeEdited,
+      chatId: chatId,
+      deleted: deleted,
+      edited: edited,
+      serverId: serverId,
+      kind: kind,
+      name: name,
+      read: read ?? this.read,
+      sessionId: sessionId,
+      textValue: textValue,
+      tsSeconds: tsSeconds,
+      tsMicros: tsMicros,
+      quote: quote,
+      modified: modified,
+    );
+  }
 }
 
 extension MessageX on Message {

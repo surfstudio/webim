@@ -24,6 +24,9 @@ import 'package:webim_sdk/src/api/webim_cache.dart';
 import 'package:webim_sdk/src/util/ssl_http_overrides.dart';
 import 'package:webim_sdk/webim_sdk.dart';
 
+import 'domain/delta_response.dart';
+import 'domain/message.dart';
+
 const _pollingDuration = const Duration(seconds: 20);
 final _defaultHttpHeaders = <String, dynamic>{'x-webim-sdk-version': '0.0.0-indev'};
 
@@ -171,16 +174,46 @@ class WebimSession {
                 ),
               )
               .toList();
-          _cache.addMessageList(events);
+          _cache.addMessageList(events, silently: true);
         }
         return response;
       },
     );
   }
 
-  Future<DefaultResponse> setChatReadByVisitor() {
-    return _webimRepository.setChatRead();
+  Future<void> setChatRead() async {
+    final oldestUnreadTimestamp = _cache.oldestUnreadTimestamp;
+    if (oldestUnreadTimestamp == -1) return;
+    await updateFrom(oldestUnreadTimestamp);
   }
+
+  Future<DefaultResponse> setChatReadByVisitor() {
+    return _webimRepository.setChatRead(
+      action: ChatAction.ACTION_CHAT_READ_BY_VISITOR.value,
+      authorizationToken: _authorization.authToken,
+      pageId: _authorization.pageId,
+    );
+  }
+
+  void setChatReadLocally() {
+    final updates = messageThread
+        .where((message) =>
+            message.kind == WMMessageKind.VISITOR ||
+            message.kind == WMMessageKind.FILE_FROM_VISITOR ||
+            message.kind == WMMessageKind.STICKER_VISITOR)
+        .where((message) => !(message.read ?? false))
+        .map((message) => message.copyWith(read: true))
+        .map((e) => DeltaItem<Message>(
+              objectType: DeltaItemType.CHAT_MESSAGE,
+              data: e,
+              event: Event.UPDATE,
+            ))
+        .toList();
+    _cache.addMessageList(updates);
+    _sendAllSendingMessageFromCache();
+  }
+
+  Future<void> updateFrom(int fromMilliseconds) => _polling(fromMilliseconds);
 
   void reUploadFile(Message message) {
     _cache.addMessageList([
@@ -374,13 +407,13 @@ class WebimSession {
     _sendAllSendingFileMessageFromCache();
   }
 
-  Future<void> _polling() async {
+  Future<void> _polling([int fromMilliseconds]) async {
     final result = await SslHttpOverrides.runSslOverridesZoned<Future<DeltaResponse>>(
       () => _webimRepository.getDelta(
         since: _currentSyncRevision,
         authorizationToken: _authorization.authToken,
         pageId: _authorization.pageId,
-        timestamp: DateTime.now().millisecondsSinceEpoch,
+        timestamp: fromMilliseconds ?? DateTime.now().millisecondsSinceEpoch,
       ),
     );
 
@@ -452,8 +485,12 @@ class WebimSessionBuilder {
   }
 
   set account(String account) => _accountName = account;
+
   set location(String location) => _location = location;
+
   set visitorFields(String visitorFields) => _visitorFields = visitorFields;
+
   set deviceId(String deviceId) => _deviceId = deviceId;
+
   set pushParams(WebimSessionPushParams pushParams) => _pushParams = pushParams;
 }
