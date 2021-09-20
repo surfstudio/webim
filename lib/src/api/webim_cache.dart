@@ -22,12 +22,12 @@ class WebimCache {
 
   /// время последнего сообщения
   int get oldestTimestampMicro => messageList.isEmpty
-      ? -1
+      ? null
       : messageList.map<int>((message) => message.tsMicros.round()).reduce(min);
 
   /// время самого нового сообщения
   int get newestTimestampMicro => messageList.isEmpty
-      ? -1
+      ? null
       : messageList.map<int>((message) => message.tsMicros.round()).reduce(max);
 
   /// время последнего непрочитанного сообщения

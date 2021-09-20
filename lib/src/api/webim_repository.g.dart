@@ -152,44 +152,19 @@ class _WebimRepository implements WebimRepository {
   }
 
   @override
-  getHistoryBefore(pageId, authorizationToken, timestampBefore) async {
+  getHistory(pageId, authorizationToken, {before, since}) async {
     ArgumentError.checkNotNull(pageId, 'pageId');
     ArgumentError.checkNotNull(authorizationToken, 'authorizationToken');
-    ArgumentError.checkNotNull(timestampBefore, 'timestampBefore');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       'page-id': pageId,
       'auth-token': authorizationToken,
-      'before-ts': timestampBefore
-    };
-    final _data = <String, dynamic>{};
-    final Response<Map<String, dynamic>> _result = await _dio.request(
-        '/l/v/m/history',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = HistoryBeforeResponse.fromJson(_result.data);
-    return Future.value(value);
-  }
-
-  @override
-  getHistorySince(pageId, authorizationToken, since) async {
-    ArgumentError.checkNotNull(pageId, 'pageId');
-    ArgumentError.checkNotNull(authorizationToken, 'authorizationToken');
-    ArgumentError.checkNotNull(since, 'since');
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      'page-id': pageId,
-      'auth-token': authorizationToken,
+      'before-ts': before,
       'since': since
     };
+    queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final Response<Map<String, dynamic>> _result = await _dio.request(
-        '/l/v/m/history',
+    final Response<Map<String, dynamic>> _result = await _dio.request('/l/v/m/history',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -197,7 +172,7 @@ class _WebimRepository implements WebimRepository {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = HistorySinceResponse.fromJson(_result.data);
+    final value = HistoryResponse.fromJson(_result.data);
     return Future.value(value);
   }
 

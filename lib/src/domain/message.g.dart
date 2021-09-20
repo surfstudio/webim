@@ -51,8 +51,8 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'sessionId': instance.sessionId,
       'text': instance.textValue,
       'ts': instance.tsSeconds,
-      'ts_m': instance.tsMicros,
       'modifiedTs': instance.modified,
+      'ts_m': instance.tsMicros,
       'quote': instance.quote,
     };
 

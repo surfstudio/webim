@@ -75,6 +75,10 @@ class WebimSession {
 
   List<Message> get messageThread => List.from(_cache.messageList)..sort();
 
+  int get timeStampNewestMessage => _cache?.newestTimestampMicro;
+
+  int get timeStampOldestMessage => _cache?.oldestTimestampMicro;
+
   void resume() {
     _isPaused = false;
 
@@ -155,12 +159,12 @@ class WebimSession {
     return urlFactory.url(message.data?.file?.desc?.filename, guid);
   }
 
-  Future<HistoryBeforeResponse> getLatestMessages() async {
+  Future<HistoryResponse> getLatestMessages() async {
     return _webimRepository
-        .getHistoryBefore(
+        .getHistory(
       _authorization.pageId,
       _authorization.authToken,
-      _cache.oldestTimestampMicro,
+      before: _cache?.oldestTimestampMicro,
     )
         .then(
       (response) {
@@ -262,10 +266,6 @@ class WebimSession {
           ))
     ]);
   }
-
-  int get timeStampNewestMessage => _cache.newestTimestampMicro;
-
-  int get timeStampOldestMessage => _cache.oldestTimestampMicro;
 
   void _sendAllSendingFileMessageFromCache() {
     _cache.sendingFileMessages.forEach(

@@ -6,9 +6,8 @@ part of 'history_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-HistoryBeforeResponse _$HistoryBeforeResponseFromJson(
-    Map<String, dynamic> json) {
-  return HistoryBeforeResponse(
+HistoryResponse _$HistoryResponseFromJson(Map<String, dynamic> json) {
+  return HistoryResponse(
     json['result'] as String,
     json['data'] == null
         ? null
@@ -16,24 +15,7 @@ HistoryBeforeResponse _$HistoryBeforeResponseFromJson(
   );
 }
 
-Map<String, dynamic> _$HistoryBeforeResponseToJson(
-        HistoryBeforeResponse instance) =>
-    <String, dynamic>{
-      'result': instance.result,
-      'data': instance.data,
-    };
-
-HistorySinceResponse _$HistorySinceResponseFromJson(Map<String, dynamic> json) {
-  return HistorySinceResponse(
-    json['result'] as String,
-    json['data'] == null
-        ? null
-        : HistoryResponseData.fromJson(json['data'] as Map<String, dynamic>),
-  );
-}
-
-Map<String, dynamic> _$HistorySinceResponseToJson(
-        HistorySinceResponse instance) =>
+Map<String, dynamic> _$HistoryResponseToJson(HistoryResponse instance) =>
     <String, dynamic>{
       'result': instance.result,
       'data': instance.data,
