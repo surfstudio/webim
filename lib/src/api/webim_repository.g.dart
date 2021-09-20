@@ -160,7 +160,7 @@ class _WebimRepository implements WebimRepository {
     final queryParameters = <String, dynamic>{
       'page-id': pageId,
       'auth-token': authorizationToken,
-      'before': timestampBefore
+      'before-ts': timestampBefore
     };
     final _data = <String, dynamic>{};
     final Response<Map<String, dynamic>> _result = await _dio.request(

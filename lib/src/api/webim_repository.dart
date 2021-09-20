@@ -61,7 +61,7 @@ abstract class WebimRepository {
       PARAMETER_SURVEY_QUESTION_ID = "question-id",
       PARAMETER_SURVEY_ID = "survey-id",
       PARAMETER_TIMESTAMP = "ts",
-      PARAMETER_TIMESTAMP_BEFORE = "before",
+      PARAMETER_TIMESTAMP_BEFORE = "before-ts",
       PARAMETER_TITLE = "title",
       PARAMETER_VISIT_SESSION_ID = "visit-session-id",
       PARAMETER_VISITOR_EXT = "visitor-ext",
@@ -129,14 +129,15 @@ abstract class WebimRepository {
     @Field(PARAMETER_AUTHORIZATION_TOKEN) String authorizationToken,
   });
 
+  /// [since] in microseconds as int
   @GET(URL_SUFFIX_HISTORY)
   Future<HistoryBeforeResponse> getHistoryBefore(
       @Query(PARAMETER_PAGE_ID) String pageId,
       @Query(PARAMETER_AUTHORIZATION_TOKEN) String authorizationToken,
-      @Query(PARAMETER_TIMESTAMP_BEFORE) int timestampBefore // ms
+      @Query(PARAMETER_TIMESTAMP_BEFORE) int timestampBefore
       );
 
-  /// Since is time in microseconds as string
+  /// [since] in microseconds as string
   @GET(URL_SUFFIX_HISTORY)
   Future<HistorySinceResponse> getHistorySince(
       @Query(PARAMETER_PAGE_ID) String pageId,
