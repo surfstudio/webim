@@ -21,14 +21,14 @@ class WebimCache {
   });
 
   /// время последнего сообщения
-  int get oldestTimestamp => messageList.isEmpty
+  int get oldestTimestampMicro => messageList.isEmpty
       ? -1
-      : messageList.map<int>((message) => message.tsSeconds.round()).reduce(min);
+      : messageList.map<int>((message) => message.tsMicros.round()).reduce(min);
 
   /// время самого нового сообщения
-  int get newestTimestamp => messageList.isEmpty
+  int get newestTimestampMicro => messageList.isEmpty
       ? -1
-      : messageList.map<int>((message) => message.tsSeconds.round()).reduce(max);
+      : messageList.map<int>((message) => message.tsMicros.round()).reduce(max);
 
   /// время последнего непрочитанного сообщения
   int get oldestUnreadTimestamp => messageList.isEmpty

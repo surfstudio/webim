@@ -160,7 +160,7 @@ class WebimSession {
         .getHistoryBefore(
       _authorization.pageId,
       _authorization.authToken,
-      _cache.oldestTimestamp * 1000,
+      _cache.oldestTimestampMicro,
     )
         .then(
       (response) {
@@ -263,9 +263,9 @@ class WebimSession {
     ]);
   }
 
-  int get timeStampNewestMessage => _cache.newestTimestamp;
+  int get timeStampNewestMessage => _cache.newestTimestampMicro;
 
-  int get timeStampOldestMessage => _cache.oldestTimestamp;
+  int get timeStampOldestMessage => _cache.oldestTimestampMicro;
 
   void _sendAllSendingFileMessageFromCache() {
     _cache.sendingFileMessages.forEach(
