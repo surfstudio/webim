@@ -129,21 +129,15 @@ abstract class WebimRepository {
     @Field(PARAMETER_AUTHORIZATION_TOKEN) String authorizationToken,
   });
 
-  /// [since] in microseconds as int
-  @GET(URL_SUFFIX_HISTORY)
-  Future<HistoryBeforeResponse> getHistoryBefore(
-      @Query(PARAMETER_PAGE_ID) String pageId,
-      @Query(PARAMETER_AUTHORIZATION_TOKEN) String authorizationToken,
-      @Query(PARAMETER_TIMESTAMP_BEFORE) int timestampBefore
-      );
-
+  /// [before] in microseconds as int
   /// [since] in microseconds as string
   @GET(URL_SUFFIX_HISTORY)
-  Future<HistorySinceResponse> getHistorySince(
-      @Query(PARAMETER_PAGE_ID) String pageId,
-      @Query(PARAMETER_AUTHORIZATION_TOKEN) String authorizationToken,
-      @Query(PARAMETER_SINCE) String since //microseconds
-      );
+  Future<HistoryResponse> getHistory(
+    @Query(PARAMETER_PAGE_ID) String pageId,
+    @Query(PARAMETER_AUTHORIZATION_TOKEN) String authorizationToken, {
+    @Query(PARAMETER_TIMESTAMP_BEFORE) int before,
+    @Query(PARAMETER_SINCE) String since,
+  });
 
   @POST(URL_SUFFIX_FILE_UPLOAD)
   Future<String> _uploadFileUnparse({@Body() FormData data});
