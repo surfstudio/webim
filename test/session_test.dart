@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:webim_sdk/src/webim_session.dart';
@@ -20,20 +21,18 @@ void main() {
 
       while (true) {
         await Future.delayed(Duration(seconds: 5));
-        final uploadedFileMessage = session.messageThread.firstWhere(
-          (message) => message?.data?.file?.desc?.guid != null,
-          orElse: () => null,
+        final uploadedFileMessage = session.messageThread.firstWhereOrNull(
+          (message) => message.data?.file?.desc?.guid != null,
         );
         if (uploadedFileMessage != null) {
+          final filename = uploadedFileMessage.data?.file?.desc?.filename;
+          if (filename == null) break;
           final url = session.messageFileDownloadUrl(uploadedFileMessage);
-          print(url);
+          if (url == null) break;
 
           final request = await HttpClient().getUrl(Uri.parse(url));
           final response = await request.close();
-          response.pipe(File('result/${uploadedFileMessage.data.file.desc.filename}').openWrite());
-
-          final resultFile = File('result/${uploadedFileMessage.data.file.desc.filename}');
-          expect(resultFile != null, true);
+          response.pipe(File('result/$filename').openWrite());
         }
       }
     },

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
-import 'package:meta/meta.dart';
 
 /// Access time duration for file download (seconds)
 const _accessDuration = 300;

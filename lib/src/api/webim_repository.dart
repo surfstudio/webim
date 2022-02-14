@@ -78,13 +78,13 @@ abstract class WebimRepository {
   factory WebimRepository(Dio dio, {String baseUrl}) = _WebimRepository;
 
   @GET(URL_SUFFIX_DELTA)
-  Future<DeltaResponse> getLogin({
+  Future<DeltaResponse?> getLogin({
     @Header(PARAMETER_SDK_VERSION) String? sdkVersion,
     @Query(PARAMETER_EVENT) String event = 'init',
-    @Query(PARAMETER_PUSH_SERVICE) required String pushService,
-    @Query(PARAMETER_PUSH_TOKEN) required String pushToken,
+    @Query(PARAMETER_PUSH_SERVICE) String? pushService,
+    @Query(PARAMETER_PUSH_TOKEN) String? pushToken,
     @Query(PARAMETER_PLATFORM) String platform = 'flutter',
-    @Query(PARAMETER_VISITOR_EXT) required String visitorExtJsonString,
+    @Query(PARAMETER_VISITOR_EXT) String? visitorExtJsonString,
     @Query(PARAMETER_VISITOR_FIELDS) String? visitorFieldsJsonString,
     @Query(PARAMETER_PROVIDED_AUTHORIZATION_TOKEN) String? providedAuthorizationToken,
     @Query(PARAMETER_LOCATION) required String location,
@@ -98,7 +98,7 @@ abstract class WebimRepository {
   });
 
   @GET(URL_SUFFIX_DELTA)
-  Future<DeltaResponse> getDelta({
+  Future<DeltaResponse?> getDelta({
     @Query(PARAMETER_SINCE) required int since,
     @Query(PARAMETER_PAGE_ID) required String pageId,
     @Query(PARAMETER_AUTHORIZATION_TOKEN) required String authorizationToken,
@@ -108,7 +108,7 @@ abstract class WebimRepository {
   /// action = [ChatAction.ACTION_CHAT_MESSAGE]
   @POST(URL_SUFFIX_ACTION)
   @FormUrlEncoded()
-  Future<DefaultResponse> sendMessage({
+  Future<DefaultResponse?> sendMessage({
     @Field(PARAMETER_ACTION) String? action,
     @Field(PARAMETER_MESSAGE) String? message,
     @Field(PARAMETER_KIND) String? kind,
@@ -122,7 +122,7 @@ abstract class WebimRepository {
   /// action = [ChatAction.ACTION_CHAT_READ_BY_VISITOR]
   @POST(URL_SUFFIX_ACTION)
   @FormUrlEncoded()
-  Future<DefaultResponse> setChatRead({
+  Future<DefaultResponse?> setChatRead({
     @Field(PARAMETER_ACTION) String? action,
     @Field(PARAMETER_PAGE_ID) required String pageId,
     @Field(PARAMETER_AUTHORIZATION_TOKEN) required String authorizationToken,
@@ -131,7 +131,7 @@ abstract class WebimRepository {
   /// [before] in microseconds as int
   /// [since] in microseconds as string
   @GET(URL_SUFFIX_HISTORY)
-  Future<HistoryResponse> getHistory(
+  Future<HistoryResponse?> getHistory(
     @Query(PARAMETER_PAGE_ID) String pageId,
     @Query(PARAMETER_AUTHORIZATION_TOKEN) String authorizationToken, {
     @Query(PARAMETER_TIMESTAMP_BEFORE) int? before,
@@ -143,7 +143,7 @@ abstract class WebimRepository {
 }
 
 extension WebimrepositoryParserExtention on WebimRepository {
-  Future<UploadResponse> uploadFile({
+  Future<UploadResponse?> uploadFile({
     required File file,
     required String clientSideId,
     required String pageId,

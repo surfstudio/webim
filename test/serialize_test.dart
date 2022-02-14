@@ -49,7 +49,7 @@ void main() {
       final json = jsonDecode(src.replaceAll('"{', '{').replaceAll('}"', '}'));
       final message = Message.fromJson(json);
 
-      expect(message.data.file.desc.guid == 'd9cc80d8873842ad9a1727e97a0cd518', true);
+      expect(message.data?.file?.desc?.guid == 'd9cc80d8873842ad9a1727e97a0cd518', true);
     },
   );
 }

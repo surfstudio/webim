@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:webim_sdk/src/domain/chat_action.dart';
 import 'package:webim_sdk/src/domain/default_response.dart';
 import 'package:webim_sdk/src/domain/upload_response.dart';
 import 'package:webim_sdk/src/domain/history_response.dart';
@@ -88,7 +87,6 @@ void setChatVisitorRead() async {
     () async {
       final repository = _createRepository();
       final result = await repository.setChatRead(
-        action: ChatAction.ACTION_CHAT_READ_BY_VISITOR.value,
         pageId: 'fa6026bb331243e8814d98baf6600d6d',
         authorizationToken: '6201ab127b6347abb94e68bac7fe2906',
       );
@@ -173,15 +171,14 @@ void hetHistoryBefore() {
     'getHistoryBefore',
     () async {
       final repository = _createRepository();
-      final result = await repository.getHistoryBefore(
+      final result = await repository.getHistory(
         'c4c8ebbffe5c41fd969a8364e081a1b4',
         '6201ab127b6347abb94e68bac7fe2906',
-        // 1627130511930,
-        DateTime.now().microsecondsSinceEpoch,
+        before: DateTime.now().microsecondsSinceEpoch,
       );
 
       expect(result != null, true);
-      expect(result is HistoryBeforeResponse, true);
+      expect(result is HistoryResponse, true);
     },
   );
 }
@@ -199,14 +196,14 @@ void getHistorySince() {
     'getHistorySince',
     () async {
       final repository = _createRepository();
-      final result = await repository.getHistorySince(
+      final result = await repository.getHistory(
         'c4c8ebbffe5c41fd969a8364e081a1b4',
         '6201ab127b6347abb94e68bac7fe2906',
-        '1627130511930745',
+        since: '1627130511930745',
       );
 
       expect(result != null, true);
-      expect(result is HistorySinceResponse, true);
+      expect(result is HistoryResponse, true);
     },
   );
 }
@@ -231,7 +228,7 @@ Future<void> sendMessage() async {
       // #endregion
 
       final repository = _createRepository();
-      DefaultResponse result = await repository.sendMessage(
+      DefaultResponse? result = await repository.sendMessage(
         action: 'chat.message',
         authorizationToken: '12ba863fbecb4c61bc5dcb3ed818c2ac',
         pageId: '2985abfafd5241948f1bf5aff3a00078',
@@ -267,8 +264,8 @@ getDeltaGroup() {
             isToRespondImmediately: true,
             deviceId: '89d8f156-0ff2-4dca-889c-dc4e7d59f6fc',
           );
-          authToken = loginResponse.fullUpdate.authToken;
-          authToken = loginResponse.fullUpdate.pageId;
+          authToken = loginResponse?.fullUpdate?.authToken ?? '';
+          pageId = loginResponse?.fullUpdate?.pageId ?? '';
         },
       );
 

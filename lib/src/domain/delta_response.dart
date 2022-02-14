@@ -8,9 +8,9 @@ class DeltaResponse extends ErrorResponse {
   @JsonKey(name: "revision")
   final int revision;
   @JsonKey(name: "fullUpdate")
-  final DeltaFullUpdate fullUpdate;
+  final DeltaFullUpdate? fullUpdate;
   @JsonKey(name: "deltaList")
-  final List<DeltaItem> deltaList;
+  final List<DeltaItem>? deltaList;
 
   DeltaResponse(
     this.revision,

@@ -16,13 +16,13 @@ class _WebimRepository implements WebimRepository {
   String? baseUrl;
 
   @override
-  Future<DeltaResponse> getLogin(
+  Future<DeltaResponse?> getLogin(
       {sdkVersion,
       event = 'init',
-      required pushService,
-      required pushToken,
+      pushService,
+      pushToken,
       platform = 'flutter',
-      required visitorExtJsonString,
+      visitorExtJsonString,
       visitorFieldsJsonString,
       providedAuthorizationToken,
       required location,
@@ -55,11 +55,11 @@ class _WebimRepository implements WebimRepository {
     final _headers = <String, dynamic>{r'x-webim-sdk-version': sdkVersion};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<Map<String, dynamic>>(_setStreamType<DeltaResponse>(
+    final _result = await _dio.fetch<Map<String, dynamic>?>(_setStreamType<DeltaResponse>(
         Options(method: 'GET', headers: _headers, extra: _extra)
             .compose(_dio.options, '/l/v/m/delta', queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = DeltaResponse.fromJson(_result.data!);
+    final value = _result.data == null ? null : DeltaResponse.fromJson(_result.data!);
     return value;
   }
 

@@ -34,8 +34,8 @@ class WebimAuthorization {
     String visitorFields,
   ) {
     return WebimAuthorization(
-      authToken: response.fullUpdate.authToken,
-      pageId: response.fullUpdate.pageId,
+      authToken: response.fullUpdate?.authToken ?? '',
+      pageId: response.fullUpdate?.pageId ?? '',
       accountName: accountName,
       location: location,
       visitorFields: visitorFields,

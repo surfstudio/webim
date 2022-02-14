@@ -7,12 +7,10 @@ class SslHttpOverrides extends HttpOverrides {
       ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
 
-  static T runSslOverridesZoned<T>(T Function() function) {
+  static T? runSslOverridesZoned<T>(T? Function() function) {
     if (Platform.isAndroid) {
       HttpOverrides.runZoned(
-        () {
-          return function();
-        },
+        function,
         createHttpClient: (SecurityContext? c) => SslHttpOverrides().createHttpClient(c),
       );
     }

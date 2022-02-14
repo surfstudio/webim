@@ -8,9 +8,11 @@ part of 'delta_response.dart';
 
 DeltaResponse _$DeltaResponseFromJson(Map<String, dynamic> json) => DeltaResponse(
       json['revision'] as int,
-      DeltaFullUpdate.fromJson(json['fullUpdate'] as Map<String, dynamic>),
-      (json['deltaList'] as List<dynamic>)
-          .map((e) => DeltaItem<dynamic>.fromJson(e as Map<String, dynamic>))
+      json['fullUpdate'] == null
+          ? null
+          : DeltaFullUpdate.fromJson(json['fullUpdate'] as Map<String, dynamic>),
+      (json['deltaList'] as List<dynamic>?)
+          ?.map((e) => DeltaItem<dynamic>.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

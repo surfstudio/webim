@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:webim_sdk/src/api/webim_cache.dart';
 import 'package:webim_sdk/src/api/webim_repository.dart';
-import 'package:webim_sdk/src/domain/chat_action.dart';
 import 'package:webim_sdk/src/domain/delta_response.dart';
 import 'package:webim_sdk/src/domain/webim_authorization.dart';
 import 'package:webim_sdk/src/exception.dart';
@@ -154,7 +153,7 @@ class WebimSession {
     return urlFactory.url(message.data?.file?.desc?.filename ?? '', guid);
   }
 
-  Future<HistoryResponse> getLatestMessages() async {
+  Future<HistoryResponse?> getLatestMessages() async {
     return _webimRepository
         .getHistory(
       _authorization?.pageId ?? '',
@@ -163,8 +162,8 @@ class WebimSession {
     )
         .then(
       (response) {
-        if (response.data.messages?.isNotEmpty ?? false) {
-          final events = response.data.messages
+        if (response?.data.messages?.isNotEmpty ?? false) {
+          final events = response?.data.messages
               ?.map<DeltaItem<Message>>(
                 (message) => DeltaItem<Message>(
                   objectType: DeltaItemType.CHAT_MESSAGE,
@@ -186,9 +185,8 @@ class WebimSession {
     await updateFrom(oldestUnreadTimestamp);
   }
 
-  Future<DefaultResponse> setChatReadByVisitor() {
+  Future<DefaultResponse?> setChatReadByVisitor() {
     return _webimRepository.setChatRead(
-      action: ChatAction.ACTION_CHAT_READ_BY_VISITOR.value,
       authorizationToken: _authorization?.authToken ?? '',
       pageId: _authorization?.pageId ?? '',
     );
@@ -319,9 +317,8 @@ class WebimSession {
 
   void _sendAllSendingMessageFromCache() {
     _cache?.sendingMessage.forEach(
-      (message) => SslHttpOverrides.runSslOverridesZoned<Future<DefaultResponse>>(
+      (message) => SslHttpOverrides.runSslOverridesZoned<Future<DefaultResponse?>>(
         () => _webimRepository.sendMessage(
-          action: ChatAction.ACTION_CHAT_MESSAGE.value,
           authorizationToken: _authorization?.authToken ?? '',
           pageId: _authorization?.pageId ?? '',
           clientSideId: message.clientSideId ?? '',
@@ -363,7 +360,7 @@ class WebimSession {
   }
 
   Future<void> _login() async {
-    final result = await SslHttpOverrides.runSslOverridesZoned<Future<DeltaResponse>>(
+    final result = await SslHttpOverrides.runSslOverridesZoned<Future<DeltaResponse?>>(
       () => _webimRepository.getLogin(
         visitorExtJsonString: _visitorFields,
         location: _location,
@@ -374,19 +371,19 @@ class WebimSession {
         title: ClientTitleFactory.defaultTitle,
       ),
     );
+    if (result == null) return;
     _authorization = WebimAuthorization.fromDeltaResponse(
       result,
       _accountName,
       _location,
       _visitorFields,
     );
-    if (result == null) return;
     _currentSyncRevision = result.revision;
     if (result.fullUpdate != null) {
-      _onFullUpdate(result.fullUpdate);
+      _onFullUpdate(result.fullUpdate!);
     }
     if (result.deltaList != null) {
-      _onDeltaUpdate(result.deltaList);
+      _onDeltaUpdate(result.deltaList!);
     }
     _pollingEvent();
   }
@@ -403,7 +400,7 @@ class WebimSession {
   }
 
   Future<void> _polling([int? fromMilliseconds]) async {
-    final result = await SslHttpOverrides.runSslOverridesZoned<Future<DeltaResponse>>(
+    final result = await SslHttpOverrides.runSslOverridesZoned<Future<DeltaResponse?>>(
       () => _webimRepository.getDelta(
         since: _currentSyncRevision ?? 0,
         authorizationToken: _authorization?.authToken ?? '',
@@ -411,16 +408,17 @@ class WebimSession {
         timestamp: fromMilliseconds ?? DateTime.now().millisecondsSinceEpoch,
       ),
     );
+    if (result == null) return;
 
     if (result.deltaList == null && result.fullUpdate == null) {
       return;
     }
 
     if (result.fullUpdate != null) {
-      _onFullUpdate(result.fullUpdate);
+      _onFullUpdate(result.fullUpdate!);
     }
     if (result.deltaList != null) {
-      _onDeltaUpdate(result.deltaList);
+      _onDeltaUpdate(result.deltaList!);
     }
 
     _currentSyncRevision = result.revision;
