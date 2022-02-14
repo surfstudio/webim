@@ -245,8 +245,6 @@ Future<void> sendMessage() async {
   );
 }
 
-
-
 getDeltaGroup() {
   return group(
     'getDeltaGroup',

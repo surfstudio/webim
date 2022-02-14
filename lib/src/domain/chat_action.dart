@@ -38,7 +38,7 @@ enum ChatAction {
 }
 
 extension ChatActionX on ChatAction {
-  String get value => _$ChatActionEnumMap[this];
+  String? get value => _$ChatActionEnumMap[this];
 }
 
 /// Support serializable class

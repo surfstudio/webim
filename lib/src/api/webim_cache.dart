@@ -1,32 +1,30 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
-
+import 'package:collection/collection.dart';
 import 'package:webim_sdk/src/domain/delta_response.dart';
-import 'package:webim_sdk/src/domain/message_event.dart';
 
 import 'package:webim_sdk/webim_sdk.dart';
 
 class WebimCache {
   final List<Message> messageList;
-  int readingSince;
-  int readingBefore;
+  int? readingSince;
+  int? readingBefore;
 
   final StreamController<MessageEvent> eventStream;
 
   WebimCache({
-    @required this.messageList,
-    this.eventStream,
+    required this.messageList,
+    required this.eventStream,
   });
 
   /// время последнего сообщения
-  int get oldestTimestampMicro => messageList.isEmpty
+  int? get oldestTimestampMicro => messageList.isEmpty
       ? null
       : messageList.map<int>((message) => message.tsMicros.round()).reduce(min);
 
   /// время самого нового сообщения
-  int get newestTimestampMicro => messageList.isEmpty
+  int? get newestTimestampMicro => messageList.isEmpty
       ? null
       : messageList.map<int>((message) => message.tsMicros.round()).reduce(max);
 
@@ -35,7 +33,7 @@ class WebimCache {
       ? -1
       : messageList
           .where((message) => !(message.read ?? false))
-          .map<int>((message) => message.tsSeconds.round())
+          .map<int>((message) => message.tsSeconds?.round() ?? 0)
           .reduce(min);
 
   void replaceWithMessageList(List<Message> list) {
@@ -50,20 +48,16 @@ class WebimCache {
     for (var item in list) {
       if (item.objectType == DeltaItemType.CHAT_MESSAGE) {
         if (item.event == Event.DELETE) {
-          Message existMsg = messageList.firstWhere(
+          Message? existMsg = messageList.firstWhereOrNull(
             (element) {
               if (item.data == null) return element == Message(serverId: item.id);
               if (item.data is Message)
                 return element == Message(serverId: item.id, clientSideId: item.data?.clientSideId);
               return false;
             },
-            orElse: () => null,
           );
           if (existMsg == null && item.data != null && item.data is Message) {
-            existMsg = messageList.firstWhere(
-              (element) => element == item.data,
-              orElse: () => null,
-            );
+            existMsg = messageList.firstWhereOrNull((element) => element == item.data);
           }
           if (existMsg != null) {
             messageList.remove(existMsg);
@@ -72,10 +66,7 @@ class WebimCache {
           }
         } else {
           final message = item.data as Message;
-          final existMsg = messageList.firstWhere(
-            (element) => element == message,
-            orElse: () => null,
-          );
+          final existMsg = messageList.firstWhereOrNull((element) => element == message);
           if (existMsg == null) {
             modifiedEventList.add(MessageEvent.added(message));
             messageList.add(message);

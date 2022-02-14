@@ -7,13 +7,13 @@ part 'message.g.dart';
 @JsonSerializable()
 class Message implements Comparable {
   @JsonKey(name: "authorId")
-  final int authorId;
+  final int? authorId;
   @JsonKey(name: "avatar")
-  final String avatar;
+  final String? avatar;
   @JsonKey(name: "canBeReplied")
-  final bool canBeReplied;
+  final bool? canBeReplied;
   @JsonKey(name: "clientSideId")
-  final String clientSideId;
+  final String? clientSideId;
 
   /*
     There's no need to unparse this data.
@@ -21,35 +21,35 @@ class Message implements Comparable {
     But generally this field contains JSON object.
     */
   @JsonKey(name: "data")
-  final MessageData data;
+  final MessageData? data;
   @JsonKey(name: "canBeEdited")
-  final bool canBeEdited;
+  final bool? canBeEdited;
   @JsonKey(name: "chatId")
-  final String chatId;
+  final String? chatId;
   @JsonKey(name: "deleted")
-  final bool deleted;
+  final bool? deleted;
   @JsonKey(name: "edited")
-  final bool edited;
+  final bool? edited;
   @JsonKey(name: "id")
-  final String serverId;
+  final String? serverId;
   @JsonKey(name: "kind")
-  final WMMessageKind kind;
+  final WMMessageKind? kind;
   @JsonKey(name: "name")
-  final String name;
+  final String? name;
   @JsonKey(name: "read")
-  final bool read;
+  final bool? read;
   @JsonKey(name: "sessionId")
-  final String sessionId;
+  final String? sessionId;
   @JsonKey(name: "text")
-  final String textValue;
+  final String? textValue;
   @JsonKey(name: "ts")
-  final int tsSeconds;
+  final int? tsSeconds;
   @JsonKey(name: "modifiedTs")
-  final double modified;
+  final double? modified;
   @JsonKey(name: "ts_m")
   final int tsMicros;
   @JsonKey(name: "quote")
-  final Quote quote;
+  final Quote? quote;
 
   Message({
     this.authorId,
@@ -67,12 +67,12 @@ class Message implements Comparable {
     this.read,
     this.sessionId,
     this.textValue,
-    int tsSeconds,
-    int tsMicros,
+    int? tsSeconds,
+    int? tsMicros,
     this.quote,
     this.modified,
-  })  : tsMicros = tsMicros ?? tsSeconds?.round()?.fromSecToMicro() ?? -1,
-        tsSeconds = tsSeconds?.round() ?? tsMicros?.fromMicroToSec() ?? -1;
+  })  : tsMicros = tsMicros ?? tsSeconds?.round().fromSecToMicro().toInt() ?? -1,
+        tsSeconds = tsSeconds?.round() ?? tsMicros?.fromMicroToSec().toInt() ?? -1;
 
   factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
 
@@ -97,12 +97,12 @@ class Message implements Comparable {
   @override
   int compareTo(other) {
     if (other is Message) {
-      return tsSeconds.compareTo(other.tsSeconds);
+      return tsSeconds?.compareTo(other.tsSeconds ?? 0) ?? 0;
     }
     throw WebimTypeException('other is! Message');
   }
 
-  Message copyWith({bool read}) {
+  Message copyWith({bool? read}) {
     return Message(
       authorId: authorId,
       avatar: avatar,
@@ -128,7 +128,7 @@ class Message implements Comparable {
 }
 
 extension MessageX on Message {
-  DateTime get time => DateTime.fromMillisecondsSinceEpoch((tsSeconds * 1000).round());
+  DateTime get time => DateTime.fromMillisecondsSinceEpoch(((tsSeconds ?? 0) * 1000).round());
 
   WebimMessageState get status =>
       serverId != null ? WebimMessageState.sent : WebimMessageState.sending;
@@ -137,7 +137,7 @@ extension MessageX on Message {
 @JsonSerializable()
 class MessageData {
   @JsonKey(name: "file")
-  final MessageFile file;
+  final MessageFile? file;
 
   MessageData({this.file});
 
@@ -149,11 +149,11 @@ class MessageData {
 @JsonSerializable()
 class MessageFile {
   @JsonKey(name: "state")
-  final FileState state;
+  final FileState? state;
   @JsonKey(name: "progress")
-  final int progress;
+  final int? progress;
   @JsonKey(name: "desc")
-  final MessageFileDescription desc;
+  final MessageFileDescription? desc;
 
   MessageFile({
     this.state,
@@ -169,15 +169,15 @@ class MessageFile {
 @JsonSerializable()
 class MessageFileDescription {
   @JsonKey(name: "guid")
-  final String guid;
+  final String? guid;
   @JsonKey(name: "filename")
-  final String filename;
+  final String? filename;
   @JsonKey(name: "content_type")
-  final String contentType;
+  final String? contentType;
   @JsonKey(name: "size")
-  final int size;
+  final int? size;
   @JsonKey(name: "visitor_id")
-  final String visitorId;
+  final String? visitorId;
 
   MessageFileDescription({
     this.guid,
@@ -205,9 +205,9 @@ enum FileState {
 @JsonSerializable()
 class Quote {
   @JsonKey(name: "message")
-  final QuotedMessage message;
+  final QuotedMessage? message;
   @JsonKey(name: "state")
-  final QuoteState state;
+  final QuoteState? state;
 
   Quote({
     this.message,
@@ -222,19 +222,19 @@ class Quote {
 @JsonSerializable()
 class QuotedMessage {
   @JsonKey(name: "authorId")
-  final String authorId;
+  final String? authorId;
   @JsonKey(name: "id")
-  final String serverId;
+  final String? serverId;
   @JsonKey(name: "kind")
-  final WMMessageKind kind;
+  final WMMessageKind? kind;
   @JsonKey(name: "name")
-  final String name;
+  final String? name;
   @JsonKey(name: "text")
-  final String textValue;
+  final String? textValue;
   @JsonKey(name: "ts")
-  final int tsSeconds;
+  final int? tsSeconds;
   @JsonKey(name: "channelSideId")
-  final String channelSideId;
+  final String? channelSideId;
 
   QuotedMessage({
     this.authorId,
@@ -261,7 +261,7 @@ enum QuoteState {
 }
 
 extension QuoteStateX on QuoteState {
-  String get value => _$QuoteStateEnumMap[this];
+  String? get value => _$QuoteStateEnumMap[this];
 }
 
 enum WMMessageKind {
@@ -294,7 +294,7 @@ enum WMMessageKind {
 }
 
 extension WMMessageKindX on WMMessageKind {
-  String get value => _$WMMessageKindEnumMap[this];
+  String? get value => _$WMMessageKindEnumMap[this];
 }
 
 enum WebimMessageState {

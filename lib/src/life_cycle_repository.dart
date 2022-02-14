@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 /// Репозиторий уведомлений жизненного цикла приложений
 class LifeCycleRepository with WidgetsBindingObserver, ChangeNotifier {
-  AppLifecycleState _appState;
+  AppLifecycleState? _appState;
 
-  AppLifecycleState get state => _appState;
+  AppLifecycleState? get state => _appState;
   void subscribe() {
     WidgetsBinding.instance?.addObserver(this);
   }

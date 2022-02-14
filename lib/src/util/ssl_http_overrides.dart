@@ -2,7 +2,7 @@ import 'dart:io';
 
 class SslHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext context) {
+  HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
       ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
@@ -13,7 +13,7 @@ class SslHttpOverrides extends HttpOverrides {
         () {
           return function();
         },
-        createHttpClient: (SecurityContext c) => SslHttpOverrides().createHttpClient(c),
+        createHttpClient: (SecurityContext? c) => SslHttpOverrides().createHttpClient(c),
       );
     }
     return function();

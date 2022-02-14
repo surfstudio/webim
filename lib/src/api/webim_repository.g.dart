@@ -6,92 +6,85 @@ part of 'webim_repository.dart';
 // RetrofitGenerator
 // **************************************************************************
 
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 class _WebimRepository implements WebimRepository {
-  _WebimRepository(this._dio, {this.baseUrl}) {
-    ArgumentError.checkNotNull(_dio, '_dio');
-  }
+  _WebimRepository(this._dio, {this.baseUrl});
 
   final Dio _dio;
 
-  String baseUrl;
+  String? baseUrl;
 
   @override
-  getLogin(
+  Future<DeltaResponse> getLogin(
       {sdkVersion,
       event = 'init',
-      pushService,
-      pushToken,
+      required pushService,
+      required pushToken,
       platform = 'flutter',
-      visitorExtJsonString,
+      required visitorExtJsonString,
       visitorFieldsJsonString,
       providedAuthorizationToken,
-      location,
+      required location,
       appVersion,
       visitSessionId,
       title = 'Android Client',
       since = 0,
       isToRespondImmediately = true,
-      deviceId,
+      required deviceId,
       prechatFields}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      'event': event,
-      'push-service': pushService,
-      'push-token': pushToken,
-      'platform': platform,
-      'visitor-ext': visitorExtJsonString,
-      'visitor': visitorFieldsJsonString,
-      'provided_auth_token': providedAuthorizationToken,
-      'location': location,
-      'app-version': appVersion,
-      'visit-session-id': visitSessionId,
-      'title': title,
-      'since': since,
-      'respond-immediately': isToRespondImmediately,
-      'device-id': deviceId,
-      'prechat-key-independent-fields': prechatFields
+      r'event': event,
+      r'push-service': pushService,
+      r'push-token': pushToken,
+      r'platform': platform,
+      r'visitor-ext': visitorExtJsonString,
+      r'visitor': visitorFieldsJsonString,
+      r'provided_auth_token': providedAuthorizationToken,
+      r'location': location,
+      r'app-version': appVersion,
+      r'visit-session-id': visitSessionId,
+      r'title': title,
+      r'since': since,
+      r'respond-immediately': isToRespondImmediately,
+      r'device-id': deviceId,
+      r'prechat-key-independent-fields': prechatFields
     };
     queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{r'x-webim-sdk-version': sdkVersion};
+    _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final Response<Map<String, dynamic>> _result = await _dio.request(
-        '/l/v/m/delta',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{'x-webim-sdk-version': sdkVersion},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = DeltaResponse.fromJson(_result.data);
-    return Future.value(value);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_setStreamType<DeltaResponse>(
+        Options(method: 'GET', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/l/v/m/delta', queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = DeltaResponse.fromJson(_result.data!);
+    return value;
   }
 
   @override
-  getDelta({since, pageId, authorizationToken, timestamp}) async {
+  Future<DeltaResponse> getDelta(
+      {required since, required pageId, required authorizationToken, required timestamp}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      'since': since,
-      'page-id': pageId,
-      'auth-token': authorizationToken,
-      'ts': timestamp
+      r'since': since,
+      r'page-id': pageId,
+      r'auth-token': authorizationToken,
+      r'ts': timestamp
     };
-    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final Response<Map<String, dynamic>> _result = await _dio.request(
-        '/l/v/m/delta',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = DeltaResponse.fromJson(_result.data);
-    return Future.value(value);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_setStreamType<DeltaResponse>(
+        Options(method: 'GET', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/l/v/m/delta', queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = DeltaResponse.fromJson(_result.data!);
+    return value;
   }
 
   @override
-  sendMessage(
+  Future<DefaultResponse> sendMessage(
       {action,
       message,
       kind,
@@ -103,6 +96,7 @@ class _WebimRepository implements WebimRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
     final _data = {
       'action': action,
       'message': message,
@@ -113,84 +107,82 @@ class _WebimRepository implements WebimRepository {
       'hint_question': isHintQuestion,
       'data': dataJsonString
     };
-    final Response<Map<String, dynamic>> _result = await _dio.request(
-        '/l/v/m/action',
-        queryParameters: queryParameters,
-        options: RequestOptions(
+    _data.removeWhere((k, v) => v == null);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_setStreamType<DefaultResponse>(Options(
             method: 'POST',
-            headers: <String, dynamic>{},
+            headers: _headers,
             extra: _extra,
-            contentType: 'application/x-www-form-urlencoded',
-            baseUrl: baseUrl),
-        data: _data);
-    final value = DefaultResponse.fromJson(_result.data);
-    return Future.value(value);
+            contentType: 'application/x-www-form-urlencoded')
+        .compose(_dio.options, '/l/v/m/action', queryParameters: queryParameters, data: _data)
+        .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = DefaultResponse.fromJson(_result.data!);
+    return value;
   }
 
   @override
-  setChatRead({action, pageId, authorizationToken}) async {
+  Future<DefaultResponse> setChatRead(
+      {action, required pageId, required authorizationToken}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
-    final _data = {
-      'action': action,
-      'page-id': pageId,
-      'auth-token': authorizationToken
-    };
-    final Response<Map<String, dynamic>> _result = await _dio.request(
-        '/l/v/m/action',
-        queryParameters: queryParameters,
-        options: RequestOptions(
+    final _headers = <String, dynamic>{};
+    final _data = {'action': action, 'page-id': pageId, 'auth-token': authorizationToken};
+    _data.removeWhere((k, v) => v == null);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_setStreamType<DefaultResponse>(Options(
             method: 'POST',
-            headers: <String, dynamic>{},
+            headers: _headers,
             extra: _extra,
-            contentType: 'application/x-www-form-urlencoded',
-            baseUrl: baseUrl),
-        data: _data);
-    final value = DefaultResponse.fromJson(_result.data);
-    return Future.value(value);
+            contentType: 'application/x-www-form-urlencoded')
+        .compose(_dio.options, '/l/v/m/action', queryParameters: queryParameters, data: _data)
+        .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = DefaultResponse.fromJson(_result.data!);
+    return value;
   }
 
   @override
-  getHistory(pageId, authorizationToken, {before, since}) async {
-    ArgumentError.checkNotNull(pageId, 'pageId');
-    ArgumentError.checkNotNull(authorizationToken, 'authorizationToken');
+  Future<HistoryResponse> getHistory(pageId, authorizationToken, {before, since}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      'page-id': pageId,
-      'auth-token': authorizationToken,
-      'before-ts': before,
-      'since': since
+      r'page-id': pageId,
+      r'auth-token': authorizationToken,
+      r'before-ts': before,
+      r'since': since
     };
     queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final Response<Map<String, dynamic>> _result = await _dio.request('/l/v/m/history',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = HistoryResponse.fromJson(_result.data);
-    return Future.value(value);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_setStreamType<HistoryResponse>(
+        Options(method: 'GET', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/l/v/m/history', queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = HistoryResponse.fromJson(_result.data!);
+    return value;
   }
 
   @override
-  _uploadFileUnparse({data}) async {
+  Future<String> _uploadFileUnparse({required data}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
     final _data = data;
-    final Response<String> _result = await _dio.request('/l/v/m/upload',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'POST',
-            headers: <String, dynamic>{},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = _result.data;
-    return Future.value(value);
+    final _result = await _dio.fetch<String>(_setStreamType<String>(
+        Options(method: 'POST', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/l/v/m/upload', queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = _result.data!;
+    return value;
+  }
+
+  RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
+    if (T != dynamic &&
+        !(requestOptions.responseType == ResponseType.bytes ||
+            requestOptions.responseType == ResponseType.stream)) {
+      if (T == String) {
+        requestOptions.responseType = ResponseType.plain;
+      } else {
+        requestOptions.responseType = ResponseType.json;
+      }
+    }
+    return requestOptions;
   }
 }

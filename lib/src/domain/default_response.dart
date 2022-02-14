@@ -9,7 +9,7 @@ class DefaultResponse extends ErrorResponse {
   DefaultResponse(this.result);
 
   @JsonKey(name: "result")
-  final String result;
+  final String? result;
 
   factory DefaultResponse.fromJson(Map<String, dynamic> json) => _$DefaultResponseFromJson(json);
 

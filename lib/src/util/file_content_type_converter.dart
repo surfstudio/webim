@@ -13,5 +13,5 @@ const _fileContentType = {
 };
 
 class FileContentTypeConverter {
-  static String contentType(String fileName) => _fileContentType[fileName?.split('.')?.last];
+  static String? contentType(String fileName) => _fileContentType[fileName.split('.').last];
 }

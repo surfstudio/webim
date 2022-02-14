@@ -31,42 +31,42 @@ class DeltaFullUpdate {
   final String authToken;
 
   @JsonKey(name: "chat")
-  final ChatItem chat;
+  final ChatItem? chat;
 
   /// Not include MVP
   // @JsonKey(name: "departments")
   // final List<DepartmentItem> departments;
 
   @JsonKey(name: "hintsEnabled")
-  final bool hintsEnabled;
+  final bool? hintsEnabled;
   @JsonKey(name: "historyRevision")
-  final String historyRevision;
+  final String? historyRevision;
   @JsonKey(name: "onlineStatus")
-  final String onlineStatus;
+  final String? onlineStatus;
   @JsonKey(name: "pageId")
   final String pageId;
   @JsonKey(name: "state")
-  final String state; // WMInvitationState
-  final String visitorJson; // Manual deserialization "visitor"
+  final String? state; // WMInvitationState
+  final String? visitorJson; // Manual deserialization "visitor"
   @JsonKey(name: "visitSessionId")
-  final String visitSessionId;
+  final String? visitSessionId;
   @JsonKey(name: "showHelloMessage")
-  final bool showHelloMessage;
+  final bool? showHelloMessage;
   @JsonKey(name: "chatStartAfterMessage")
-  final bool chatStartAfterMessage;
+  final bool? chatStartAfterMessage;
   @JsonKey(name: "helloMessageDescr")
-  final String helloMessageDescr;
+  final String? helloMessageDescr;
 
   /// Not include MVP
   // @JsonKey(name: "survey")
   // final SurveyItem survey;
 
   DeltaFullUpdate({
-    this.authToken,
+    required this.authToken,
     this.hintsEnabled,
     this.historyRevision,
     this.onlineStatus,
-    this.pageId,
+    required this.pageId,
     this.state,
     this.visitorJson,
     this.visitSessionId,
@@ -84,7 +84,7 @@ class DeltaFullUpdate {
 @JsonSerializable()
 class ChatItem {
   @JsonKey(name: "messages")
-  final List<Message> messages;
+  final List<Message>? messages;
 
   ChatItem({this.messages});
 
@@ -96,13 +96,13 @@ class ChatItem {
 @JsonSerializable()
 class DeltaItem<T> {
   @JsonKey(name: "objectType")
-  final DeltaItemType objectType;
+  final DeltaItemType? objectType;
   @JsonKey(name: "event")
-  final Event event;
+  final Event? event;
   @JsonKey(name: "id")
-  final String id;
+  final String? id;
   @JsonKey(name: "data")
-  final T data;
+  final T? data;
 
   DeltaItem({
     this.objectType,
@@ -115,7 +115,7 @@ class DeltaItem<T> {
 
   Map<String, dynamic> toJson() => _$DeltaItemToJson(this, _dataToJson);
 
-  static T _dataFromJson<T>(Object json) {
+  static T? _dataFromJson<T>(Object? json) {
     if (json is Map<String, dynamic>) {
       if (json.containsKey('text') && json.containsKey('clientSideId')) {
         return Message.fromJson(json) as T;
@@ -124,7 +124,7 @@ class DeltaItem<T> {
     return null;
   }
 
-  static Object _dataToJson<T>(T data) {
+  static Object? _dataToJson<T>(T data) {
     try {
       return (data as Message).toJson();
     } catch (_) {

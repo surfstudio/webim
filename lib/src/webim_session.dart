@@ -4,28 +4,23 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
-
+import 'package:webim_sdk/src/api/webim_cache.dart';
 import 'package:webim_sdk/src/api/webim_repository.dart';
-import 'package:webim_sdk/src/domain/history_response.dart';
-import 'package:webim_sdk/src/domain/message_event.dart';
 import 'package:webim_sdk/src/domain/chat_action.dart';
+import 'package:webim_sdk/src/domain/delta_response.dart';
+import 'package:webim_sdk/src/domain/webim_authorization.dart';
+import 'package:webim_sdk/src/exception.dart';
+import 'package:webim_sdk/src/life_cycle_repository.dart';
 import 'package:webim_sdk/src/util/client_title_factory.dart';
 import 'package:webim_sdk/src/util/file_content_type_converter.dart';
 import 'package:webim_sdk/src/util/file_download_url_factory.dart';
-import 'package:webim_sdk/src/webim_session_push_params.dart';
-import 'package:webim_sdk/src/domain/delta_response.dart';
-import 'package:webim_sdk/src/domain/default_response.dart';
-import 'package:webim_sdk/src/exception.dart';
-import 'package:webim_sdk/src/life_cycle_repository.dart';
 import 'package:webim_sdk/src/util/id_generator.dart';
 import 'package:webim_sdk/src/util/server_url_parser.dart';
-import 'package:webim_sdk/src/domain/webim_authorization.dart';
-import 'package:webim_sdk/src/api/webim_cache.dart';
 import 'package:webim_sdk/src/util/ssl_http_overrides.dart';
+import 'package:webim_sdk/src/webim_session_push_params.dart';
 import 'package:webim_sdk/webim_sdk.dart';
 
 import 'domain/delta_response.dart';
-import 'domain/message.dart';
 
 const _pollingDuration = const Duration(seconds: 20);
 final _defaultHttpHeaders = <String, dynamic>{'x-webim-sdk-version': '0.0.0-indev'};
@@ -49,7 +44,7 @@ class WebimSession {
     _init();
   }
 
-  WebimRepository _webimRepository;
+  late WebimRepository _webimRepository;
 
   final String _accountName;
   final String _location;
@@ -63,21 +58,21 @@ class WebimSession {
 
   bool _isPaused = true;
   bool _isDisposed = false;
-  Timer _pollingLoopTimer;
-  LifeCycleRepository _lifeCycleRepository;
-  WebimCache _cache;
-  int _currentSyncRevision;
+  Timer? _pollingLoopTimer;
+  LifeCycleRepository? _lifeCycleRepository;
+  WebimCache? _cache;
+  int? _currentSyncRevision;
   bool _isFileUploading = false;
 
-  WebimAuthorization _authorization;
+  late WebimAuthorization? _authorization;
 
   static WebimSessionBuilder get builder => WebimSessionBuilder();
 
-  List<Message> get messageThread => List.from(_cache.messageList)..sort();
+  List<Message> get messageThread => List.from(_cache?.messageList ?? [])..sort();
 
-  int get timeStampNewestMessage => _cache?.newestTimestampMicro;
+  int? get timeStampNewestMessage => _cache?.newestTimestampMicro;
 
-  int get timeStampOldestMessage => _cache?.oldestTimestampMicro;
+  int? get timeStampOldestMessage => _cache?.oldestTimestampMicro;
 
   void resume() {
     _isPaused = false;
@@ -93,9 +88,9 @@ class WebimSession {
     if (_isDisposed) return;
     _isPaused = true;
     _isDisposed = true;
-    _lifeCycleRepository.removeListener(_onLifeCycleEvent);
-    _lifeCycleRepository.dispose();
-    _pollingLoopTimer.cancel();
+    _lifeCycleRepository?.removeListener(_onLifeCycleEvent);
+    _lifeCycleRepository?.dispose();
+    _pollingLoopTimer?.cancel();
     messageEventStream.close();
   }
 
@@ -115,7 +110,7 @@ class WebimSession {
       data: message,
       event: Event.ADD,
     );
-    _cache.addMessageList([messageEvent]);
+    _cache?.addMessageList([messageEvent]);
 
     _sendAllSendingMessageFromCache();
   }
@@ -143,34 +138,34 @@ class WebimSession {
       data: message,
       event: Event.ADD,
     );
-    _cache.addMessageList([messageEvent]);
+    _cache?.addMessageList([messageEvent]);
 
     _sendAllSendingFileMessageFromCache();
   }
 
-  String messageFileDownloadUrl(Message message) {
+  String? messageFileDownloadUrl(Message message) {
     final guid = message.data?.file?.desc?.guid;
     if (guid == null) return null;
     final urlFactory = FileDownloadUrlFactory(
       serverUrl: ServerUrlParser.url(_accountName),
-      pageId: _authorization.pageId,
-      authToken: _authorization.authToken,
+      pageId: _authorization?.pageId ?? '',
+      authToken: _authorization?.authToken ?? '',
     );
-    return urlFactory.url(message.data?.file?.desc?.filename, guid);
+    return urlFactory.url(message.data?.file?.desc?.filename ?? '', guid);
   }
 
   Future<HistoryResponse> getLatestMessages() async {
     return _webimRepository
         .getHistory(
-      _authorization.pageId,
-      _authorization.authToken,
-      before: _cache?.oldestTimestampMicro,
+      _authorization?.pageId ?? '',
+      _authorization?.authToken ?? '',
+      before: _cache?.oldestTimestampMicro ?? 0,
     )
         .then(
       (response) {
-        if (response.data?.messages?.isNotEmpty ?? false) {
+        if (response.data.messages?.isNotEmpty ?? false) {
           final events = response.data.messages
-              .map<DeltaItem<Message>>(
+              ?.map<DeltaItem<Message>>(
                 (message) => DeltaItem<Message>(
                   objectType: DeltaItemType.CHAT_MESSAGE,
                   data: message,
@@ -178,7 +173,7 @@ class WebimSession {
                 ),
               )
               .toList();
-          _cache.addMessageList(events, silently: true);
+          _cache?.addMessageList(events ?? [], silently: true);
         }
         return response;
       },
@@ -186,7 +181,7 @@ class WebimSession {
   }
 
   Future<void> setChatRead() async {
-    final oldestUnreadTimestamp = _cache.oldestUnreadTimestamp;
+    final oldestUnreadTimestamp = _cache?.oldestUnreadTimestamp ?? -1;
     if (oldestUnreadTimestamp == -1) return;
     await updateFrom(oldestUnreadTimestamp);
   }
@@ -194,8 +189,8 @@ class WebimSession {
   Future<DefaultResponse> setChatReadByVisitor() {
     return _webimRepository.setChatRead(
       action: ChatAction.ACTION_CHAT_READ_BY_VISITOR.value,
-      authorizationToken: _authorization.authToken,
-      pageId: _authorization.pageId,
+      authorizationToken: _authorization?.authToken ?? '',
+      pageId: _authorization?.pageId ?? '',
     );
   }
 
@@ -213,14 +208,14 @@ class WebimSession {
               event: Event.UPDATE,
             ))
         .toList();
-    _cache.addMessageList(updates);
+    _cache?.addMessageList(updates);
     _sendAllSendingMessageFromCache();
   }
 
   Future<void> updateFrom(int fromMilliseconds) => _polling(fromMilliseconds);
 
   void reUploadFile(Message message) {
-    _cache.addMessageList([
+    _cache?.addMessageList([
       DeltaItem<Message>(
           objectType: DeltaItemType.CHAT_MESSAGE,
           event: Event.ADD,
@@ -244,7 +239,7 @@ class WebimSession {
   }
 
   void removeErrorUploadFile(Message message) {
-    _cache.addMessageList([
+    _cache?.addMessageList([
       DeltaItem<Message>(
           objectType: DeltaItemType.CHAT_MESSAGE,
           event: Event.DELETE,
@@ -268,25 +263,25 @@ class WebimSession {
   }
 
   void _sendAllSendingFileMessageFromCache() {
-    _cache.sendingFileMessages.forEach(
+    _cache?.sendingFileMessages.forEach(
       (message) => SslHttpOverrides.runSslOverridesZoned(
         () {
           if (_isFileUploading) return;
-          if (message.data.file.state == FileState.ERROR) return;
+          if (message.data?.file?.state == FileState.ERROR) return;
           _isFileUploading = true;
           try {
             _webimRepository
                 .uploadFile(
-              file: File(message.textValue),
-              clientSideId: message.clientSideId,
-              authorizationToken: _authorization.authToken,
-              pageId: _authorization.pageId,
+              file: File(message.textValue ?? ''),
+              clientSideId: message.clientSideId ?? '',
+              authorizationToken: _authorization?.authToken ?? '',
+              pageId: _authorization?.pageId ?? '',
             )
                 .timeout(
               _maxFileUploadTimeout,
-              onTimeout: () async {
+              onTimeout: () {
                 _onFileUploadError(message);
-                return null;
+                return Future.value();
               },
             ).whenComplete(() => _isFileUploading = false);
           } catch (e) {
@@ -299,7 +294,7 @@ class WebimSession {
 
   void _onFileUploadError(Message message) {
     _isFileUploading = false;
-    _cache.addMessageList([
+    _cache?.addMessageList([
       DeltaItem<Message>(
           objectType: DeltaItemType.CHAT_MESSAGE,
           event: Event.ADD,
@@ -323,14 +318,14 @@ class WebimSession {
   }
 
   void _sendAllSendingMessageFromCache() {
-    _cache.sendingMessage.forEach(
+    _cache?.sendingMessage.forEach(
       (message) => SslHttpOverrides.runSslOverridesZoned<Future<DefaultResponse>>(
         () => _webimRepository.sendMessage(
           action: ChatAction.ACTION_CHAT_MESSAGE.value,
-          authorizationToken: _authorization.authToken,
-          pageId: _authorization.pageId,
-          clientSideId: message.clientSideId,
-          message: message.textValue,
+          authorizationToken: _authorization?.authToken ?? '',
+          pageId: _authorization?.pageId ?? '',
+          clientSideId: message.clientSideId ?? '',
+          message: message.textValue ?? '',
         ),
       ),
     );
@@ -407,12 +402,12 @@ class WebimSession {
     _sendAllSendingFileMessageFromCache();
   }
 
-  Future<void> _polling([int fromMilliseconds]) async {
+  Future<void> _polling([int? fromMilliseconds]) async {
     final result = await SslHttpOverrides.runSslOverridesZoned<Future<DeltaResponse>>(
       () => _webimRepository.getDelta(
-        since: _currentSyncRevision,
-        authorizationToken: _authorization.authToken,
-        pageId: _authorization.pageId,
+        since: _currentSyncRevision ?? 0,
+        authorizationToken: _authorization?.authToken ?? '',
+        pageId: _authorization?.pageId ?? '',
         timestamp: fromMilliseconds ?? DateTime.now().millisecondsSinceEpoch,
       ),
     );
@@ -434,15 +429,15 @@ class WebimSession {
 
   void _onFullUpdate(DeltaFullUpdate update) {
     if (update.chat?.messages == null) return;
-    _cache.replaceWithMessageList(update.chat.messages);
+    _cache?.replaceWithMessageList(update.chat?.messages ?? []);
   }
 
   void _onDeltaUpdate(List<DeltaItem> update) {
-    _cache.addMessageList(update);
+    _cache?.addMessageList(update);
   }
 
   void _onLifeCycleEvent() {
-    final state = _lifeCycleRepository.state;
+    final state = _lifeCycleRepository?.state;
     if (state == AppLifecycleState.paused) {
       this.pause();
     }
@@ -463,24 +458,24 @@ class WebimSession {
 /// ```
 ///
 class WebimSessionBuilder {
-  String _accountName;
-  String _location;
-  String _visitorFields;
-  String _deviceId;
-  WebimSessionPushParams _pushParams;
+  String? _accountName;
+  String? _location;
+  late String _visitorFields;
+  late String _deviceId;
+  late WebimSessionPushParams _pushParams;
 
   WebimSession build() {
     if (_location == null || _accountName == null)
       throw WebimBuilderException('Need provide account and location params at least');
 
     return WebimSession._(
-      _accountName,
-      _location,
+      _accountName!,
+      _location!,
       _visitorFields,
       _deviceId,
-      _pushParams?.pushPtatform?.value,
-      _pushParams?.pushService?.value,
-      _pushParams?.pushToken,
+      _pushParams.pushPtatform.value ?? '',
+      _pushParams.pushService.value ?? '',
+      _pushParams.pushToken,
     );
   }
 

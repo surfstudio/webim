@@ -12,9 +12,9 @@ class FileDownloadUrlFactory {
   final String serverUrl;
 
   FileDownloadUrlFactory({
-    @required this.pageId,
-    @required this.authToken,
-    @required this.serverUrl,
+    required this.pageId,
+    required this.authToken,
+    required this.serverUrl,
   });
 
   String url(String fileName, String guid) {

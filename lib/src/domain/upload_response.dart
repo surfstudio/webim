@@ -17,19 +17,19 @@ class UploadResponse {
 @JsonSerializable()
 class FileParametersItem {
   @JsonKey(name: "size")
-  final int size;
+  final int? size;
   @JsonKey(name: "guid")
-  final String guid;
+  final String? guid;
   @JsonKey(name: "content_type")
-  final String contentType;
+  final String? contentType;
   @JsonKey(name: "filename")
-  final String filename;
+  final String? filename;
   @JsonKey(name: "image")
-  final WMImageParams image;
+  final WMImageParams? image;
   @JsonKey(name: "visitor_id")
-  final String visitorId;
+  final String? visitorId;
   @JsonKey(name: "client_content_type")
-  final String clientContentType;
+  final String? clientContentType;
 
   FileParametersItem({
     this.size,

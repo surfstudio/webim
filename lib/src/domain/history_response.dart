@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:webim_sdk/src/domain/message.dart';
 
-
 part 'history_response.g.dart';
 
 @JsonSerializable()
@@ -13,8 +12,7 @@ class HistoryResponse {
 
   HistoryResponse(this.result, this.data);
 
-  factory HistoryResponse.fromJson(Map<String, dynamic> json) =>
-      _$HistoryResponseFromJson(json);
+  factory HistoryResponse.fromJson(Map<String, dynamic> json) => _$HistoryResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$HistoryResponseToJson(this);
 }
@@ -26,11 +24,11 @@ class HistoryResponseData {
   @JsonKey(name: 'revision')
   final String revision;
   @JsonKey(name: "messages")
-  final List<Message> messages;
+  final List<Message?>? messages;
 
   HistoryResponseData({
-    this.hasMore,
-    this.revision,
+    required this.hasMore,
+    required this.revision,
     this.messages,
   });
 

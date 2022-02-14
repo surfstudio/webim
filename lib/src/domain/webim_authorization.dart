@@ -10,23 +10,23 @@ class WebimAuthorization {
   @JsonKey(name: "pageId")
   final String pageId;
   @JsonKey(name: "accountName")
-  final String accountName;
+  final String? accountName;
   @JsonKey(name: "location")
-  final String location;
+  final String? location;
   @JsonKey(name: "visitorFields")
-  final String visitorFields;
+  final String? visitorFields;
 
   WebimAuthorization({
-    this.authToken,
-    this.pageId,
-    this.accountName,
-    this.location,
-    this.visitorFields,
+    required this.authToken,
+    required this.pageId,
+    required this.accountName,
+    required this.location,
+    required this.visitorFields,
   });
 
   factory WebimAuthorization.fromJson(Map<String, dynamic> json) =>
       _$WebimAuthorizationFromJson(json);
-      
+
   factory WebimAuthorization.fromDeltaResponse(
     DeltaResponse response,
     String accountName,
@@ -34,8 +34,8 @@ class WebimAuthorization {
     String visitorFields,
   ) {
     return WebimAuthorization(
-      authToken: response.fullUpdate?.authToken,
-      pageId: response.fullUpdate?.pageId,
+      authToken: response.fullUpdate.authToken,
+      pageId: response.fullUpdate.pageId,
       accountName: accountName,
       location: location,
       visitorFields: visitorFields,

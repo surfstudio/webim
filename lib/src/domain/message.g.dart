@@ -6,33 +6,28 @@ part of 'message.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Message _$MessageFromJson(Map<String, dynamic> json) {
-  return Message(
-    authorId: json['authorId'] as int,
-    avatar: json['avatar'] as String,
-    canBeReplied: json['canBeReplied'] as bool,
-    clientSideId: json['clientSideId'] as String,
-    data: json['data'] == null
-        ? null
-        : MessageData.fromJson(json['data'] as Map<String, dynamic>),
-    canBeEdited: json['canBeEdited'] as bool,
-    chatId: json['chatId'] as String,
-    deleted: json['deleted'] as bool,
-    edited: json['edited'] as bool,
-    serverId: json['id'] as String,
-    kind: _$enumDecodeNullable(_$WMMessageKindEnumMap, json['kind']),
-    name: json['name'] as String,
-    read: json['read'] as bool,
-    sessionId: json['sessionId'] as String,
-    textValue: json['text'] as String,
-    tsSeconds: (json['ts'] as num)?.toDouble()?.round(),
-    tsMicros: (json['ts_m'] as num)?.toInt(),
-    quote: json['quote'] == null
-        ? null
-        : Quote.fromJson(json['quote'] as Map<String, dynamic>),
-    modified: (json['modifiedTs'] as num)?.toDouble(),
-  );
-}
+Message _$MessageFromJson(Map<String, dynamic> json) => Message(
+      authorId: json['authorId'] as int?,
+      avatar: json['avatar'] as String?,
+      canBeReplied: json['canBeReplied'] as bool?,
+      clientSideId: json['clientSideId'] as String?,
+      data:
+          json['data'] == null ? null : MessageData.fromJson(json['data'] as Map<String, dynamic>),
+      canBeEdited: json['canBeEdited'] as bool?,
+      chatId: json['chatId'] as String?,
+      deleted: json['deleted'] as bool?,
+      edited: json['edited'] as bool?,
+      serverId: json['id'] as String?,
+      kind: $enumDecodeNullable(_$WMMessageKindEnumMap, json['kind']),
+      name: json['name'] as String?,
+      read: json['read'] as bool?,
+      sessionId: json['sessionId'] as String?,
+      textValue: json['text'] as String?,
+      tsSeconds: json['ts'] as int?,
+      tsMicros: json['ts_m'] as int?,
+      quote: json['quote'] == null ? null : Quote.fromJson(json['quote'] as Map<String, dynamic>),
+      modified: (json['modifiedTs'] as num?)?.toDouble(),
+    );
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'authorId': instance.authorId,
@@ -56,38 +51,6 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'quote': instance.quote,
     };
 
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
-}
-
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
-}
-
 const _$WMMessageKindEnumMap = {
   WMMessageKind.ACTION_REQUEST: 'action_request',
   WMMessageKind.CONTACT_REQUEST: 'cont_req',
@@ -104,31 +67,24 @@ const _$WMMessageKindEnumMap = {
   WMMessageKind.VISITOR: 'visitor',
 };
 
-MessageData _$MessageDataFromJson(Map<String, dynamic> json) {
-  return MessageData(
-    file: json['file'] == null
-        ? null
-        : MessageFile.fromJson(json['file'] as Map<String, dynamic>),
-  );
-}
+MessageData _$MessageDataFromJson(Map<String, dynamic> json) => MessageData(
+      file:
+          json['file'] == null ? null : MessageFile.fromJson(json['file'] as Map<String, dynamic>),
+    );
 
-Map<String, dynamic> _$MessageDataToJson(MessageData instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MessageDataToJson(MessageData instance) => <String, dynamic>{
       'file': instance.file,
     };
 
-MessageFile _$MessageFileFromJson(Map<String, dynamic> json) {
-  return MessageFile(
-    state: _$enumDecodeNullable(_$FileStateEnumMap, json['state']),
-    progress: json['progress'] as int,
-    desc: json['desc'] == null
-        ? null
-        : MessageFileDescription.fromJson(json['desc'] as Map<String, dynamic>),
-  );
-}
+MessageFile _$MessageFileFromJson(Map<String, dynamic> json) => MessageFile(
+      state: $enumDecodeNullable(_$FileStateEnumMap, json['state']),
+      progress: json['progress'] as int?,
+      desc: json['desc'] == null
+          ? null
+          : MessageFileDescription.fromJson(json['desc'] as Map<String, dynamic>),
+    );
 
-Map<String, dynamic> _$MessageFileToJson(MessageFile instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MessageFileToJson(MessageFile instance) => <String, dynamic>{
       'state': _$FileStateEnumMap[instance.state],
       'progress': instance.progress,
       'desc': instance.desc,
@@ -140,19 +96,16 @@ const _$FileStateEnumMap = {
   FileState.UPLOAD: 'upload',
 };
 
-MessageFileDescription _$MessageFileDescriptionFromJson(
-    Map<String, dynamic> json) {
-  return MessageFileDescription(
-    guid: json['guid'] as String,
-    filename: json['filename'] as String,
-    contentType: json['content_type'] as String,
-    size: json['size'] as int,
-    visitorId: json['visitor_id'] as String,
-  );
-}
+MessageFileDescription _$MessageFileDescriptionFromJson(Map<String, dynamic> json) =>
+    MessageFileDescription(
+      guid: json['guid'] as String?,
+      filename: json['filename'] as String?,
+      contentType: json['content_type'] as String?,
+      size: json['size'] as int?,
+      visitorId: json['visitor_id'] as String?,
+    );
 
-Map<String, dynamic> _$MessageFileDescriptionToJson(
-        MessageFileDescription instance) =>
+Map<String, dynamic> _$MessageFileDescriptionToJson(MessageFileDescription instance) =>
     <String, dynamic>{
       'guid': instance.guid,
       'filename': instance.filename,
@@ -161,14 +114,12 @@ Map<String, dynamic> _$MessageFileDescriptionToJson(
       'visitor_id': instance.visitorId,
     };
 
-Quote _$QuoteFromJson(Map<String, dynamic> json) {
-  return Quote(
-    message: json['message'] == null
-        ? null
-        : QuotedMessage.fromJson(json['message'] as Map<String, dynamic>),
-    state: _$enumDecodeNullable(_$QuoteStateEnumMap, json['state']),
-  );
-}
+Quote _$QuoteFromJson(Map<String, dynamic> json) => Quote(
+      message: json['message'] == null
+          ? null
+          : QuotedMessage.fromJson(json['message'] as Map<String, dynamic>),
+      state: $enumDecodeNullable(_$QuoteStateEnumMap, json['state']),
+    );
 
 Map<String, dynamic> _$QuoteToJson(Quote instance) => <String, dynamic>{
       'message': instance.message,
@@ -181,20 +132,17 @@ const _$QuoteStateEnumMap = {
   QuoteState.NOT_FOUND: 'not-found',
 };
 
-QuotedMessage _$QuotedMessageFromJson(Map<String, dynamic> json) {
-  return QuotedMessage(
-    authorId: json['authorId'] as String,
-    serverId: json['id'] as String,
-    kind: _$enumDecodeNullable(_$WMMessageKindEnumMap, json['kind']),
-    name: json['name'] as String,
-    textValue: json['text'] as String,
-    tsSeconds: json['ts'] as int,
-    channelSideId: json['channelSideId'] as String,
-  );
-}
+QuotedMessage _$QuotedMessageFromJson(Map<String, dynamic> json) => QuotedMessage(
+      authorId: json['authorId'] as String?,
+      serverId: json['id'] as String?,
+      kind: $enumDecodeNullable(_$WMMessageKindEnumMap, json['kind']),
+      name: json['name'] as String?,
+      textValue: json['text'] as String?,
+      tsSeconds: json['ts'] as int?,
+      channelSideId: json['channelSideId'] as String?,
+    );
 
-Map<String, dynamic> _$QuotedMessageToJson(QuotedMessage instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$QuotedMessageToJson(QuotedMessage instance) => <String, dynamic>{
       'authorId': instance.authorId,
       'id': instance.serverId,
       'kind': _$WMMessageKindEnumMap[instance.kind],

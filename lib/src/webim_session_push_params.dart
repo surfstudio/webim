@@ -13,9 +13,9 @@ class WebimSessionPushParams {
   final String pushToken;
 
   WebimSessionPushParams({
-    @required this.pushService,
-    @required this.pushPtatform,
-    @required this.pushToken,
+    required this.pushService,
+    required this.pushPtatform,
+    required this.pushToken,
   });
 
   factory WebimSessionPushParams.fromJson(Map<String, dynamic> json) =>
@@ -34,7 +34,7 @@ enum WebimSessionPushService {
 }
 
 extension WebimSessionPushServiceX on WebimSessionPushService {
-  String get value => _$WebimSessionPushServiceEnumMap[this];
+  String? get value => _$WebimSessionPushServiceEnumMap[this];
 }
 
 enum WebimSessionPushPtatform {
@@ -45,5 +45,5 @@ enum WebimSessionPushPtatform {
 }
 
 extension WebimSessionPushPtatformX on WebimSessionPushPtatform {
-  String get value => _$WebimSessionPushPtatformEnumMap[this];
+  String? get value => _$WebimSessionPushPtatformEnumMap[this];
 }
