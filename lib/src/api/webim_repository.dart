@@ -139,7 +139,7 @@ abstract class WebimRepository {
   });
 
   @POST(URL_SUFFIX_FILE_UPLOAD)
-  Future<String> _uploadFileUnparse({@Body() required FormData data});
+  Future<String?> _uploadFileUnparse({@Body() required FormData data});
 }
 
 extension WebimrepositoryParserExtention on WebimRepository {
@@ -175,6 +175,6 @@ extension WebimrepositoryParserExtention on WebimRepository {
     _data.fields.add(MapEntry('auth-token', authorizationToken));
 
     return _uploadFileUnparse(data: _data)
-        .then((json) => UploadResponse.fromJson(jsonDecode(json)));
+        .then((json) => json == null ? null : UploadResponse.fromJson(jsonDecode(json)));
   }
 }

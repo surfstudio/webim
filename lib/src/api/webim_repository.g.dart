@@ -64,7 +64,7 @@ class _WebimRepository implements WebimRepository {
   }
 
   @override
-  Future<DeltaResponse> getDelta(
+  Future<DeltaResponse?> getDelta(
       {required since, required pageId, required authorizationToken, required timestamp}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -75,16 +75,16 @@ class _WebimRepository implements WebimRepository {
     };
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<Map<String, dynamic>>(_setStreamType<DeltaResponse>(
+    final _result = await _dio.fetch<Map<String, dynamic>?>(_setStreamType<DeltaResponse>(
         Options(method: 'GET', headers: _headers, extra: _extra)
             .compose(_dio.options, '/l/v/m/delta', queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = DeltaResponse.fromJson(_result.data!);
+    final value = _result.data == null ? null : DeltaResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<DefaultResponse> sendMessage(
+  Future<DefaultResponse?> sendMessage(
       {action,
       message,
       kind,
@@ -108,19 +108,19 @@ class _WebimRepository implements WebimRepository {
       'data': dataJsonString
     };
     _data.removeWhere((k, v) => v == null);
-    final _result = await _dio.fetch<Map<String, dynamic>>(_setStreamType<DefaultResponse>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>?>(_setStreamType<DefaultResponse>(Options(
             method: 'POST',
             headers: _headers,
             extra: _extra,
             contentType: 'application/x-www-form-urlencoded')
         .compose(_dio.options, '/l/v/m/action', queryParameters: queryParameters, data: _data)
         .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = DefaultResponse.fromJson(_result.data!);
+    final value = _result.data == null ? null : DefaultResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<DefaultResponse> setChatRead(
+  Future<DefaultResponse?> setChatRead(
       {action, required pageId, required authorizationToken}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -128,19 +128,19 @@ class _WebimRepository implements WebimRepository {
     final _headers = <String, dynamic>{};
     final _data = {'action': action, 'page-id': pageId, 'auth-token': authorizationToken};
     _data.removeWhere((k, v) => v == null);
-    final _result = await _dio.fetch<Map<String, dynamic>>(_setStreamType<DefaultResponse>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>?>(_setStreamType<DefaultResponse>(Options(
             method: 'POST',
             headers: _headers,
             extra: _extra,
             contentType: 'application/x-www-form-urlencoded')
         .compose(_dio.options, '/l/v/m/action', queryParameters: queryParameters, data: _data)
         .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = DefaultResponse.fromJson(_result.data!);
+    final value = _result.data == null ? null : DefaultResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<HistoryResponse> getHistory(pageId, authorizationToken, {before, since}) async {
+  Future<HistoryResponse?> getHistory(pageId, authorizationToken, {before, since}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'page-id': pageId,
@@ -151,16 +151,16 @@ class _WebimRepository implements WebimRepository {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<Map<String, dynamic>>(_setStreamType<HistoryResponse>(
+    final _result = await _dio.fetch<Map<String, dynamic>?>(_setStreamType<HistoryResponse>(
         Options(method: 'GET', headers: _headers, extra: _extra)
             .compose(_dio.options, '/l/v/m/history', queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = HistoryResponse.fromJson(_result.data!);
+    final value = _result.data == null ? null : HistoryResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<String> _uploadFileUnparse({required data}) async {
+  Future<String?> _uploadFileUnparse({required data}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -169,7 +169,7 @@ class _WebimRepository implements WebimRepository {
         Options(method: 'POST', headers: _headers, extra: _extra)
             .compose(_dio.options, '/l/v/m/upload', queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = _result.data!;
+    final value = _result.data;
     return value;
   }
 
